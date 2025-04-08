@@ -1,0 +1,11 @@
+# Ignora ambientes virtuais
+.venv*/
+*/.venv*/
+*/Lib/
+*/site-packages/
+
+# Ignora pesos de modelos muito grandes
+*.pt
+*.pyd
+*.dll
+*.lib

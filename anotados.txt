@@ -1,0 +1,60 @@
+# print("\nTeste1\n")
+# print("shape: ", video_keypoints.shape) 
+# # Índice	Valor	O que representa
+# # 0	        28	      Número de frames no vídeo
+# # 1	         1	      Número de pessoas detectadas por frame (só 1 pessoa)
+# # 2	        17	      Número de keypoints por pessoa (pontos do corpo)
+# # 3	         2	      As coordenadas de cada keypoint: (x, y)
+
+# print("Formato: ", video_keypoints) # Formato 
+# # [
+# #   [ # Frame 1
+# #     [  # Pessoa 1
+# #       [x1, y1],  # Keypoint 1
+# #       [x2, y2],  # Keypoint 2
+# #       ...
+# #       [x17, y17]  # Keypoint 17
+# #     ]
+# #   ],
+# #   [ # Frame 2
+# #     [  # Pessoa 1
+# #       [x1, y1],  # Keypoint 1
+# #       [x2, y2],  # Keypoint 2
+# #       ...
+# #       [x17, y17]  # Keypoint 17
+# #     ]
+# #   ],
+# #   ...
+# # ]
+# # # video_keypoints[frame][person][keypoint][coord]
+
+# x = video_keypoints[4][0][9][0]  # x do keypoint 10 no frame 5
+# y = video_keypoints[4][0][9][1]  # x do keypoint 10 no frame 5
+# print("ex: ",x, y)
+
+# ######################
+
+print("\nTeste2\n")
+
+video_keypoints = np.squeeze(video_keypoints, axis=1)
+print("shape: ", video_keypoints.shape)  # agora será (28, 17, 2)
+
+print("Formato: ", video_keypoints) # Formato
+# # [
+# #   [ # Frame 1
+# #     [x1, y1],  # Keypoint 1
+# #     [x2, y2],  # Keypoint 2
+# #     ...
+# #     [x17, y17]  # Keypoint 17
+# #   ],
+# #   [ # Frame 2
+# #     [x1, y1],  # Keypoint 1
+# #     ...
+# #   ],
+# #   ...
+# # ]
+# # # video_keypoints[frame][keypoint][coord]
+
+# x = video_keypoints[4][9][0]  # x do keypoint 10 no frame 5
+# y = video_keypoints[4][9][1]  # x do keypoint 10 no frame 5
+# print("ex2: ",x, y)
