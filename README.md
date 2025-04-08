@@ -3,22 +3,21 @@
 ### informações da estrutura:
 ## src/pose
 
-#### anima_keypoints.py
+#### anima_keypoints.py (para testar movimento)
 ##### responsável por animar os pontos chaves dentro do arquivo .csv (em um único arquivo)
 ##### - trabalhar em aniçãoa de multiplas pastas/videos
 
 
 #### exibe_keypoints.py
 ##### responsável por extrair e mostrar os pontos chaves detectados em um video
-##### - trabalhar em detecção em multiplas pastas/videos
-
+##### - trabalhando em detecção em lote
 
 #### keypoints2csv.py
 ##### responsável por converter uma lista de pontos chaves de um unico video para .csv
-##### - trabalhar em conversão em multiplas pastas/videos
+##### - trabalha na conversão em lote em tempo real
 
 #### labels_keypoints.py
-##### contem as colunas/nomes das juntas/coordenadas
+##### contem as colunas/nomes das articulações/coordenadas
 
 #### main.py
 ##### executa tudo, sempre remoldar de acordo com as demais classes

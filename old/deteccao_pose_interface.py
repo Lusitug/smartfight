@@ -1,4 +1,4 @@
-import ABC
+import abc
 
-class DeteccaoPose(ABC):
+class DeteccaoPose(abc):
     pass

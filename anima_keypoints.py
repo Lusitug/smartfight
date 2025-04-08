@@ -1,11 +1,11 @@
+import os
+import ast  # transformar string em tupla
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import ast  # transformar string em tupla
-import os
+from src.pose.utilities import path_keypoints2csv
 
-path_csv =  os.path.join("src", "keypoints_extraidos", "video_keypoints_teste.csv")   
-
+path_csv =  os.path.join(path_keypoints2csv, "Direto", "direto_T9xF3T7V.csv")   
 
 df = pd.read_csv(path_csv)
 df.columns = df.columns.str.strip() # remove caracteres indesejados
