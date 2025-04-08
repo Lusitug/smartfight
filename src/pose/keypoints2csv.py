@@ -1,11 +1,11 @@
 import os
 import pandas as pd
-from labels_keypoints import nomes_juntas
+from labels_keypoints import nome_articulacoes
 
 # converte um unico arquivo # necessario passar caminho de cada arquivo a ser convertido
 def keypoints2csv(video_keypoints, path_saida):
     # Gera as colunas do DataFrame
-    colunas = nomes_juntas()
+    colunas = nome_articulacoes()
     # armazenar as linhas do CSV
     linhas = []
 

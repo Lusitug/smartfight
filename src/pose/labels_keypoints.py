@@ -1,4 +1,4 @@
-def nomes_juntas():
+def nome_articulacoes():
     
     joint_names = [
     'nose', 'l_ey', 'r_ey', 'l_ea', 'r_ea',    'l_s', 'r_s', 'l_el', 'r_el',

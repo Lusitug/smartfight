@@ -4,10 +4,10 @@ import utilities
 import numpy as np
 from ultralytics import YOLO
 from keypoints2csv import keypoints2csv
-from labels_keypoints import nomes_juntas
+# from labels_keypoints import nome_articulacoes
 from pre_processamento import pre_process, tipagem_compativel, espremer_estrutura_keypoint
 
-nomes_juntas = nomes_juntas()
+# nome_articulacoes = nome_articulacoes()
 
 def detectar_keypoints(frame, model):
     # height, width, _ = frame.shape
@@ -26,7 +26,7 @@ def detectar_keypoints(frame, model):
                     x_norm, y_norm = coordenadas[i][0], coordenadas[i][1]
                     #util para visualizar                    # x_coord = int(x_norm * width)  # y_coord = int(y_norm * height)
                     lista_keypoints.append((x_norm, y_norm))
-                    #util para visualizar                    # cv2.circle(frame, (x_coord, y_coord), radius=3, color=(0, 0, 255), thickness=-1)  # cv2.putText(frame, nomes_juntas[i], (x_coord + 5, y_coord - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1, cv2.LINE_AA)
+                    #util para visualizar                    # cv2.circle(frame, (x_coord, y_coord), radius=3, color=(0, 0, 255), thickness=-1)  # cv2.putText(frame, nome_articulacoes[i], (x_coord + 5, y_coord - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1, cv2.LINE_AA)
                 frame_keypoints.append(lista_keypoints)
     
     return frame, frame_keypoints
