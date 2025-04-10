@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from labels_keypoints import nome_articulacoes
+from utils.labels_keypoints import nome_articulacoes
 
 # converte um unico arquivo # necessario passar caminho de cada arquivo a ser convertido
 def keypoints2csv(video_keypoints, path_saida):
@@ -22,4 +22,4 @@ def keypoints2csv(video_keypoints, path_saida):
 
     df.to_csv(path_saida, index_label="frame")
 
-    print(f"✅ CSV salvo em: {path_saida}")
+    print(f"\n✅ CSV salvo em: {path_saida}")

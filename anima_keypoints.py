@@ -3,9 +3,9 @@ import ast  # transformar string em tupla
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from src.pose.utilities import path_keypoints2csv
-
-path_csv =  os.path.join(path_keypoints2csv, "Direto", "direto_T9xF3T7V.csv")   
+from src.utils.utilidades import path_keypoints2csv
+# Processando: src\dataset\Direto\direto_Fk7CJ9IM_noise.mp4
+path_csv =  os.path.join(path_keypoints2csv, "Direto", "direto_Fk7CJ9IM_translate.csv")   
 
 df = pd.read_csv(path_csv)
 df.columns = df.columns.str.strip() # remove caracteres indesejados
