@@ -5,6 +5,7 @@ import numpy as np
 from ultralytics import YOLO
 from pose.keypoints2csv import keypoints2csv
 # from labels_keypoints import nome_articulacoes
+
 from pose.pre_processamento import pre_process, tipagem_compativel, espremer_estrutura_keypoint
 
 # nome_articulacoes = nome_articulacoes()
@@ -18,9 +19,9 @@ def detectar_keypoints(frame, model):
     for predict in estimacao:
         if predict.keypoints is not None:
             keypoints = predict.keypoints.xyn.cpu().numpy()
-            boxes = predict.boxes.xyxy.cpu().numpy()
+            print("[QUANTIDADE KEYPOINTS: ", len(keypoints),"]")
             # evitar detecção de sombras
-            print("KPS: ", len(keypoints))
+            boxes = predict.boxes.xyxy.cpu().numpy()
     
             if len(keypoints) == 0: 
                 return frame, []
@@ -57,7 +58,7 @@ def extrair_keypoints_dataset():
         if not os.path.isdir(path_pasta_golpe):
             continue
 
-        print(f"\n📁 Classe: {classe_golpe}")
+        print(f"\n📁 [GOLPE ANALISADO: {classe_golpe}]")
         # pasta de saida dos keypoints2csv
         path_pasta_saida = os.path.join(saida, classe_golpe)
         os.makedirs(path_pasta_saida, exist_ok=True)
@@ -71,9 +72,9 @@ def extrair_keypoints_dataset():
 
             video_keypoints = []
 
-            print(f"\n🎥 Processando: {path_videos}")
+            print(f"\n🎥 [PROCESSANDO: {path_videos}]")
 
-            print("Abriu?", capt.isOpened())
+            print("O VIDEO ABRIU? ", capt.isOpened())
             while capt.isOpened():
                 _, frame = capt.read()
 
@@ -89,11 +90,11 @@ def extrair_keypoints_dataset():
             capt.release()
 
             if not video_keypoints:
-                print(f"⚠️ Sem keypoints: {nome_video}")
+                print(f"⚠️ [NENHUM KEYPOINT: {nome_video}]")
 
             video_keypoints = tipagem_compativel(video_keypoints)
             video_keypoints = espremer_estrutura_keypoint(video_keypoints)
-            print("\nshape: ", video_keypoints.shape)  # (28, 17, 2) ? !
+            print("\n SHAPE: ", video_keypoints.shape)  # (28, 17, 2) ? !
 
             nome_csv_saida = os.path.splitext(nome_video)[0] + ".csv"
             caminho_csv_saida = os.path.join(path_pasta_saida, nome_csv_saida)

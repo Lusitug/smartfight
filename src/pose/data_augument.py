@@ -10,7 +10,7 @@ def aplicar_data_augmentation(dataset_saida=path_videos2estimate):
         if not os.path.isdir(path_pasta_golpe):
             continue
 
-        print(f"\n📁 Classe: {classe_golpe}")
+        print(f"\n📁 [GOLPE ANALISADO: {classe_golpe}]")
 
         for nome_video in os.listdir(path_pasta_golpe):
             if not nome_video.lower().endswith(('.mp4', '.avi', '.mov')):
@@ -20,14 +20,14 @@ def aplicar_data_augmentation(dataset_saida=path_videos2estimate):
             nome_base_video = os.path.splitext(nome_video)[0]
 
             capt = cv2.VideoCapture(path_videos)
-            print("Abriu?", capt.isOpened())
+            print("O VIDEO ABRIU? ", capt.isOpened())
 
             width_video = int(capt.get(cv2.CAP_PROP_FRAME_WIDTH))
             heigth_video = int(capt.get(cv2.CAP_PROP_FRAME_HEIGHT))
             fps = capt.get(cv2.CAP_PROP_FPS)
 
-            print(f"🎬 Processando: {nome_video} ({int(capt.get(cv2.CAP_PROP_FRAME_COUNT))} frames)")
-
+            print(f"🎬 [PROCESSANDO: {nome_video} ({int(capt.get(cv2.CAP_PROP_FRAME_COUNT))} FRAMES])")
+            
             writers = {}
             for nome_tecnica_augm, _ in AUGMENTATIONS.items():
                 nome_video_saida = f"{nome_base_video}_{nome_tecnica_augm}.mp4"
@@ -52,4 +52,4 @@ def aplicar_data_augmentation(dataset_saida=path_videos2estimate):
             capt.release()
             for nome_tecnica_augm, writer in writers.items():
                 writer.release()
-                print(f"✅ Vídeo salvo: {os.path.join(path_pasta_golpe, f'{nome_base_video}_{nome_tecnica_augm}.mp4')}")
+                print(f"✅ [SALVO: {os.path.join(path_pasta_golpe, f'{nome_base_video}_{nome_tecnica_augm}.mp4')}]")

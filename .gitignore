@@ -1,11 +1,20 @@
-# Ignora ambientes virtuais
 .venv*/
 */.venv*/
 */Lib/
 */site-packages/
 
-# Ignora pesos de modelos muito grandes
 *.pt
 *.pyd
 *.dll
 *.lib
+
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+*.webm
+
+
+*.csv
