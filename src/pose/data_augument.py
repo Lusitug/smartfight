@@ -2,8 +2,11 @@ from utils.utilidades import path_videos2estimate
 import os
 from utils.augmentations_itens import AUGMENTATIONS
 import cv2
+from time import time
 
-def aplicar_data_augmentation(dataset_saida=path_videos2estimate):
+def aplicar_data_augmentation_dataset(dataset_saida=path_videos2estimate):
+    print("[DEBUG] path_videos2estimate:", dataset_saida) 
+    tempo_inicial = time()
     for classe_golpe in os.listdir(dataset_saida):
         path_pasta_golpe = os.path.join(dataset_saida, classe_golpe)
 
@@ -20,13 +23,13 @@ def aplicar_data_augmentation(dataset_saida=path_videos2estimate):
             nome_base_video = os.path.splitext(nome_video)[0]
 
             capt = cv2.VideoCapture(path_videos)
-            print("O VIDEO ABRIU? ", capt.isOpened())
+            print("\nO VIDEO ABRIU? ", capt.isOpened())
 
             width_video = int(capt.get(cv2.CAP_PROP_FRAME_WIDTH))
             heigth_video = int(capt.get(cv2.CAP_PROP_FRAME_HEIGHT))
             fps = capt.get(cv2.CAP_PROP_FPS)
 
-            print(f"🎬 [PROCESSANDO: {nome_video} ({int(capt.get(cv2.CAP_PROP_FRAME_COUNT))} FRAMES])")
+            print(f"\n🎬 [PROCESSANDO: {nome_video} ({int(capt.get(cv2.CAP_PROP_FRAME_COUNT))} FRAMES])")
             
             writers = {}
             for nome_tecnica_augm, _ in AUGMENTATIONS.items():
@@ -52,4 +55,8 @@ def aplicar_data_augmentation(dataset_saida=path_videos2estimate):
             capt.release()
             for nome_tecnica_augm, writer in writers.items():
                 writer.release()
-                print(f"✅ [SALVO: {os.path.join(path_pasta_golpe, f'{nome_base_video}_{nome_tecnica_augm}.mp4')}]")
+                print(f"\n✅ [SALVO: {os.path.join(path_pasta_golpe, f'{nome_base_video}_{nome_tecnica_augm}.mp4')}]")
+    
+    
+    tempo_final = time()
+    print(f"\n\t⏰ [DURAÇÃO DE PRE PROCESSAMENTO: {tempo_final - tempo_inicial:.2f}]")

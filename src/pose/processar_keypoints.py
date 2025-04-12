@@ -3,11 +3,10 @@ import cv2
 import utils.utilidades as utilidades
 import numpy as np
 from ultralytics import YOLO
-from pose.keypoints2csv import keypoints2csv
+from pose.keypoints2csv import converter_keypoints_csv
 # from labels_keypoints import nome_articulacoes
-
-from pose.pre_processamento import pre_process, tipagem_compativel, espremer_estrutura_keypoint
-
+from pose.pre_processamento import reajustar_frame, converter_float32, espremer_estrutura_keypoint
+from time import time
 # nome_articulacoes = nome_articulacoes()
 
 def detectar_keypoints(frame, model):
@@ -19,7 +18,7 @@ def detectar_keypoints(frame, model):
     for predict in estimacao:
         if predict.keypoints is not None:
             keypoints = predict.keypoints.xyn.cpu().numpy()
-            print("[QUANTIDADE KEYPOINTS: ", len(keypoints),"]")
+            print("[PESSOAS DETECTADAS: ", len(keypoints),"]")
             # evitar detecção de sombras
             boxes = predict.boxes.xyxy.cpu().numpy()
     
@@ -47,6 +46,7 @@ def detectar_keypoints(frame, model):
 
 
 def extrair_keypoints_dataset():
+    tempo_inicial = time()
     # path's dos respectivos diretorios/modelo
     dataset = utilidades.path_videos2estimate
     saida = utilidades.path_keypoints2csv
@@ -74,30 +74,35 @@ def extrair_keypoints_dataset():
 
             print(f"\n🎥 [PROCESSANDO: {path_videos}]")
 
-            print("O VIDEO ABRIU? ", capt.isOpened())
+            print("\nO VIDEO ABRIU? ", capt.isOpened())
             while capt.isOpened():
                 _, frame = capt.read()
 
                 if not _:
                     break
                 
-                frame = pre_process(frame)
+                frame = reajustar_frame(frame)
                 _, keypoints = detectar_keypoints(frame, modelo_estimacao)
                 
-                if keypoints:
+                if isinstance(keypoints, list) and len(keypoints) > 0:
                     video_keypoints.append(keypoints[0]) # somente em videos com 1 pessoa
+                else:
+                    print(f"\n⚠️ [NENHUMA PESSOA DETECTADA NO FRAME: {nome_video}]")
+
 
             capt.release()
 
             if not video_keypoints:
-                print(f"⚠️ [NENHUM KEYPOINT: {nome_video}]")
+                print(f"\n⚠️ [NENHUM KEYPOINT: {nome_video}]")
 
-            video_keypoints = tipagem_compativel(video_keypoints)
+            video_keypoints = converter_float32(video_keypoints)
             video_keypoints = espremer_estrutura_keypoint(video_keypoints)
-            print("\n SHAPE: ", video_keypoints.shape)  # (28, 17, 2) ? !
+            print("\n[SHAPE: ", video_keypoints.shape,"]")  # (28, 17, 2) ? !
 
-            nome_csv_saida = os.path.splitext(nome_video)[0] + ".csv"
+            nome_csv_saida = os.path.splitext(nome_video)[0] + ".csv" 
             caminho_csv_saida = os.path.join(path_pasta_saida, nome_csv_saida)
 
-            keypoints2csv(video_keypoints=video_keypoints, path_saida=caminho_csv_saida)
-
+            converter_keypoints_csv(video_keypoints=video_keypoints, path_saida=caminho_csv_saida)
+            tempo_final = time()
+            print(f"\n✅ [SALVO: {caminho_csv_saida}]")
+            print(f"\n\t⏰ [DURAÇÃO DE EXTRAÇÃO DE KEYPOINTS: {tempo_final - tempo_inicial:.2f}]")

@@ -15,8 +15,34 @@ def translate_frame(frame, max_tx=40, max_ty=40):
     shifted = cv2.warpAffine(frame, M, (frame.shape[1], frame.shape[0]))
     return shifted
 
-def flip_frame(frame):
-    return cv2.flip(frame, 1)
+def reduzir_brilho(img, fator=0.2):
+  
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    h, s, v = cv2.split(hsv)
+
+    v = np.clip(v.astype(np.float32) * fator, 0, 255).astype(np.uint8)
+
+    hsv_mod = cv2.merge((h, s, v))
+    return cv2.cvtColor(hsv_mod, cv2.COLOR_HSV2BGR)
+
+def aumentar_brilho(img, fator=3.0):
+  
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    h, s, v = cv2.split(hsv)
+
+    v = np.clip(v.astype(np.float32) * fator, 0, 255).astype(np.uint8)
+
+    hsv_mod = cv2.merge((h, s, v))
+    return cv2.cvtColor(hsv_mod, cv2.COLOR_HSV2BGR)
+
+def scale(frame, scale_factor=2.0):
+    h, w = frame.shape[:2]
+    new_w, new_h = int(w * scale_factor), int(h * scale_factor)
+    resized = cv2.resize(frame, (new_w, new_h))
+    x_start = (new_w - w) // 2
+    y_start = (new_h - h) // 2
+    cropped = resized[y_start:y_start + h, x_start:x_start + w]
+    return cropped
 
 def gaussian_blur(frame):
     return cv2.GaussianBlur(frame, (11, 11), sigmaX=3.0)
@@ -25,8 +51,10 @@ def gaussian_blur(frame):
 AUGMENTATIONS = {
     'noise': add_noise,
     'translate': translate_frame,
-    'flip': flip_frame,
-    'gaussian': gaussian_blur
+    'shiny-': reduzir_brilho,
+    'shiny+': aumentar_brilho,
+    'gaussian': gaussian_blur,
+    'scale':scale
 }
 
 

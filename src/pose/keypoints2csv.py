@@ -1,8 +1,9 @@
 import os
 import pandas as pd
 from utils.labels_keypoints import nome_articulacoes
-
-def keypoints2csv(video_keypoints, path_saida):
+from time import time
+def converter_keypoints_csv(video_keypoints, path_saida):
+    tempo_inicial = time()
     # recebe o nome das colunas
     colunas = nome_articulacoes()
     # armazenar as linhas do CSV
@@ -21,4 +22,6 @@ def keypoints2csv(video_keypoints, path_saida):
 
     df.to_csv(path_saida, index_label="frame")
 
+    tempo_final = time()
     print(f"\n✅ [SALVO: {path_saida}]")
+    print(f"\n\t⏰ [DURAÇÃO DE CONVERSÃO KPT->CSV: {tempo_final - tempo_inicial:.2f}]")

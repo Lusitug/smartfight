@@ -1,10 +1,10 @@
 import cv2
 from ultralytics import YOLO
 from pose.processar_keypoints import detectar_keypoints
-from pose.pre_processamento import pre_process
+from pose.pre_processamento import reajustar_frame
 
 modelo_path = "modelos/yolov8x-pose.pt"
-video_path = "videos_augmentados/direto_EyHSY2mj_translate.mp4"  # exemplo
+video_path = "dataset/Direto/direto_EyHSY2mj_scale.mp4"  # exemplo
 modelo = YOLO(modelo_path)
 
 cap = cv2.VideoCapture(video_path)
@@ -14,7 +14,7 @@ while cap.isOpened():
     if not ret:
         break
 
-    frame = pre_process(frame)
+    frame = reajustar_frame(frame)
 
     frame, keypoints_lista = detectar_keypoints(frame, modelo)
 

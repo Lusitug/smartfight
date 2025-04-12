@@ -1,9 +1,10 @@
-from pose.pre_processamento import  gaussian_blur, add_noise, flip_frame, translate_frame
-
+from pose.pre_processamento import  aplicar_ruido, borrao_gaussian, aumentar_brilho, reduzir_brilho, translate_frame,scale
 
 AUGMENTATIONS = {
-    'noise': add_noise,
+    'noise': aplicar_ruido,
     'translate': translate_frame,
-    'flip': flip_frame,
-    'gaussian': gaussian_blur
+    'shiny+': aumentar_brilho,
+    'shiny-': reduzir_brilho,
+    'gaussian': borrao_gaussian,
+    'sacel': scale
 }
