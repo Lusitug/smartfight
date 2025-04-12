@@ -1,10 +1,10 @@
-from pose.pre_processamento import  aplicar_ruido, borrao_gaussian, aumentar_brilho, reduzir_brilho, translate_frame,scale
+from pose.preprocessamento.augumentador_video import AugumentadorVideo
 
 AUGMENTATIONS = {
-    'noise': aplicar_ruido,
-    'translate': translate_frame,
-    'shiny+': aumentar_brilho,
-    'shiny-': reduzir_brilho,
-    'gaussian': borrao_gaussian,
-    'sacel': scale
+    'noise': AugumentadorVideo.aplicar_ruido,
+    'translate': AugumentadorVideo.translate_frame,
+    'shiny+': AugumentadorVideo.aumentar_brilho,
+    'shiny-': AugumentadorVideo.reduzir_brilho,
+    'gaussian': AugumentadorVideo.borrao_gaussian,
+    'scale': AugumentadorVideo.scale
 }
