@@ -6,14 +6,7 @@ import os
 class ConverterKeypointsCSV:
     def __init__(self):
         self.colunas = nome_articulacoes()
-    
-    def gerar_init(self, caminho_pasta):
-        init_path = os.path.join(caminho_pasta, '__init__.py')
-        if not os.path.exists(init_path):
-            with open(init_path, 'w') as f:
-                pass
-
-        
+       
     def keypoints2csv(self, lista_keypoints_video, path_saida: str):
         tempo_inicial = time()
 
@@ -28,7 +21,6 @@ class ConverterKeypointsCSV:
 
         pasta_saida = os.path.dirname(path_saida)
         os.makedirs(pasta_saida, exist_ok=True)
-        self.gerar_init(pasta_saida)
         
         df = pd.DataFrame(linhas, columns=self.colunas)
         

@@ -8,3 +8,8 @@ path_keypoints2csv =  os.path.join("src", "keypoints_extraidos")
 
 path_videos2estimate = os.path.join("src", "dataset")
 
+def gerar_init(caminho_pasta):
+    init_path = os.path.join(caminho_pasta, '__init__.py')
+    if not os.path.exists(init_path):
+        with open(init_path, 'w') as f:
+            pass

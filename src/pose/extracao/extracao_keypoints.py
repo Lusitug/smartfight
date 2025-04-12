@@ -7,6 +7,7 @@ from typing import List, Tuple, Optional
 from pose.preprocessamento.pre_processamento import PreProcessamentoVideo
 from pose.preprocessamento.transformar_keypoints import TransformarKeypoints
 from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
+from utils.utilidades import gerar_init
 
 class ExtracaoKeypoints:
     def __init__(self, modelo_yolo_path: str, dataset_path: str, saida_csv_path: str):
@@ -81,6 +82,10 @@ class ExtracaoKeypoints:
         
     def extrair_keypoints_dataset(self):
         tempo_inicial = time()
+
+        os.makedirs(self.saida_csv_path, exist_ok=True)
+        gerar_init(caminho_pasta=self.saida_csv_path)
+
         # nome da classe
         for classe_golpe in os.listdir(self.dataset_path): 
             path_pasta_golpe = os.path.join(self.dataset_path, classe_golpe)
@@ -89,8 +94,11 @@ class ExtracaoKeypoints:
                 continue
             # pasta de saida kpt2csv
             print(f"\n📁 [GOLPE ANALISADO: {classe_golpe}]")
+            
             path_pasta_saida = os.path.join(self.saida_csv_path, classe_golpe)
             os.makedirs(path_pasta_saida, exist_ok=True)
+            gerar_init(caminho_pasta=path_pasta_saida)
+
 
             for nome_video in os.listdir(path_pasta_golpe):
                 if not nome_video.lower().endswith(('.mp4', '.avi', '.mov')):
