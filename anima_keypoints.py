@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from src.utils.utilidades import path_keypoints2csv
 
-path_csv =  os.path.join(path_keypoints2csv, "Direto", "direto_ZWIOmoMf_gaussian_noise.csv")   
+path_csv =  os.path.join(path_keypoints2csv, "Jab", "jab_BSHade1l.csv")   
 
 df = pd.read_csv(path_csv)
 df.columns = df.columns.str.strip() # remove caracteres indesejados
