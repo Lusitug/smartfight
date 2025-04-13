@@ -3,9 +3,11 @@ import ast
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from src.utils.utilidades import path_keypoints2csv
+from src.utils.utilidades import path_keypoints2csv, path_videos2estimate
+import cv2
 
-path_csv =  os.path.join(path_keypoints2csv, "CruzadoEsquerdo", "cruzado-e_wiKbXQPh_translate.csv")   
+path_csv =  os.path.join(path_keypoints2csv, "Direto", "direto_o4YCk5Q1.csv")   
+video_path =  os.path.join(path_videos2estimate, "Direto", "direto_o4YCk5Q1.mp4")   
 
 df = pd.read_csv(path_csv)
 df.columns = df.columns.str.strip() # remove caracteres indesejados
@@ -32,6 +34,16 @@ fig, ax = plt.subplots(figsize=(6, 8))
 scat = ax.scatter([], [], c='blue')
 textos = []
 
+def obter_numero_de_frames(video_path):
+    """
+    Retorna o número de frames de um vídeo especificado pelo caminho.
+    """
+    video = cv2.VideoCapture(video_path)
+    total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    video.release()
+    return total_frames
+
+
 def inicializar():
     ax.set_xlim(0, 1)
     ax.set_ylim(1, 0)  # inverte o eixo Y
@@ -57,6 +69,9 @@ def atualizar(frame):
         textos.append(ax.text(x + 0.01, y, labels_keypoints[i], fontsize=8))
 
     return scat, *textos
+
+num_frames = obter_numero_de_frames(video_path)
+print("Número de frames no vídeo:", num_frames)
 
 ani = FuncAnimation(fig, atualizar, frames=dados_frames, init_func=inicializar,
                     interval=300, blit=True, repeat=True)
