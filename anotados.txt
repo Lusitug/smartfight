@@ -58,3 +58,59 @@ print("Formato: ", video_keypoints) # Formato
 # x = video_keypoints[4][9][0]  # x do keypoint 10 no frame 5
 # y = video_keypoints[4][9][1]  # x do keypoint 10 no frame 5
 # print("ex2: ",x, y)
+
+
+
+    dataset = DatasetPersonalizado(dataset_csv_path=path_keypoints2csv)
+    print(f"TOTAL AMOSTRAS {len(dataset)}")
+    x, y = dataset[5]  
+    print(f"\n shape do input (x): {x.shape}")  # Ex: torch.Size([28, 34])
+    print(f"\n rotulo (y): {y}") 
+    loader = DataLoader(dataset=dataset, batch_size=4, shuffle=True, collate_fn=dataset.collate_pad_batch) 
+    
+    # for i, (x_batch, y_batch) in enumerate(loader):
+    #     print(f"\n🔁 Lote {i+1}")
+    #     print("Shape do x_batch:", x_batch.shape)
+    #     print("Rótulos:", y_batch)
+
+    #     for j in range(len(y_batch)):
+    #         rotulo = y_batch[j].item()
+    #         nome_classe = dataset.indice_nome(rotulo)
+    #         print(f"Amostra {j+1}: rótulo={rotulo} -> Classe: {nome_classe}")
+    #         break 
+   
+   
+   
+    # for i, frame in enumerate(x):  
+    #     pares_xy = frame.view(-1, 2)  #[num_keypoints, 2]
+    #     print(f"\nFrame {i+1}:")
+    #     for j, (x_coord, y_coord) in enumerate(pares_xy):
+    #         print(f"Ponto {j}: x={x_coord:.4f}, y={y_coord:.4f}")
+
+    ab = x[34]
+    for i in enumerate(ab):
+        print(i)
+
+    par = ab.view(-1, 2)
+    print(par)
+
+        loader = DataLoader(dataset=dataset, batch_size=4, shuffle=True, collate_fn=dataset.collate_pad_batch) 
+    xb, yb = next(iter(loader))
+    print ("x batch",xb)
+    print ("y batch",yb)
+
+    print(xb[0])
+    p = xb[0].view(-1,2)
+    print(p)
+
+        def avancando(self ,x, lens):
+        print(lens)
+        lstm_saida, _ = self.lstm(x)
+        lstm_saida = lstm_saida[:, -1, :]
+        return self.fully_connected(lstm_saida)
+
+    # for i, (x_batch, y_batch, lens_batch) in enumerate(loader):
+    #     print(f"batch {i+1}")
+    #     print(f"entradas: {x_batch.shape}")
+    #     print(f"rotulos: {y_batch}")
+    #     print(f"tamanhos dos frames: {lens_batch}")
