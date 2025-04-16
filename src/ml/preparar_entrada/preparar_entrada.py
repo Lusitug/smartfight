@@ -11,15 +11,15 @@ class DatasetPersonalizado(Dataset):
         self.numero_amostras_path = [] # paath completo para cada csv?
         self.rotulos_golpes = [] # indices correspondentes as classes/golpes
         self.nomes_golpes = [] # nomes das classes/golpes
-        self.golpes_classe = sorted([
+        self.nome_golpes_classe = sorted([
             pasta.strip() for pasta in os.listdir(dataset_csv_path)
             if os.path.isdir(os.path.join(dataset_csv_path, pasta)) and not pasta.startswith("__")
         ]) # nome das subpastas que representam o rotulo das classess
-        self.golpe_idx = {golpe_nome: idx for idx, golpe_nome in enumerate(self.golpes_classe)}
+        self.golpe_idx = {golpe_nome: idx for idx, golpe_nome in enumerate(self.nome_golpes_classe)}
         
-        print("Classes detectadas:", self.golpes_classe)
+        print("📁 Classes detectadas:", self.nome_golpes_classe)
        
-        for nome_classe in self.golpes_classe:
+        for nome_classe in self.nome_golpes_classe:
             classe_path = os.path.join(dataset_csv_path, nome_classe)
             if not os.path.isdir(classe_path):
                 continue
@@ -33,7 +33,7 @@ class DatasetPersonalizado(Dataset):
         return len(self.numero_amostras_path)
     
     def indice_nome(self, index):
-        return self.golpes_classe[index]
+        return self.nome_golpes_classe[index]
 
     def __getitem__(self, index):
         csv_path = self.numero_amostras_path[index]
@@ -78,6 +78,3 @@ class DatasetPersonalizado(Dataset):
         xs_padd = pad_sequence(xs, batch_first=True, padding_value=0)
         # preenche com 0 / tratar esses 0 preenchidos com padding
         return xs_padd, torch.tensor(ys), frames_total_batch
- 
-    # 🏷️ 🔁 
-
