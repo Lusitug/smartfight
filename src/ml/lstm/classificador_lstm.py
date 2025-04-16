@@ -1,6 +1,6 @@
-from torch import nn, relu 
 import torch
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+from torch import nn
+from torch.nn.utils.rnn import pack_padded_sequence
 
 class ClassificadorLSTM(nn.Module):
         #numero de feature por frame/numero de neuronios ocultos lstm/numero de classes a serem classificadas
@@ -24,11 +24,6 @@ class ClassificadorLSTM(nn.Module):
             dropout=dropout,
         )
 
-        # self.fully_connected = nn.Linear(
-        #     len_neuronios_ocultos,
-        #     len_tipos_golpes
-        # ) # mapear ultimo estado oculto e mapaeia para a saida
-
         self.classificador = nn.Sequential(
             nn.Linear(len_neuronios_ocultos * self.direcoes, 64), #128
             nn.ReLU(),
@@ -37,17 +32,14 @@ class ClassificadorLSTM(nn.Module):
         )
 
     def forward(self, x, len_frames_reais):
-        print("len batch:",len_frames_reais)
-        x_pack = pack_padded_sequence(x, len_frames_reais, batch_first=True, enforce_sorted=False)
+        # recebe o tamanho real dos frames obtidos com a collate_fn
+        x_pack = pack_padded_sequence(x, len_frames_reais, batch_first=True, enforce_sorted=False)  # print("xpack: ", x_pack)
+        # informar partes validas das sequencias com padding
         _, (estado_oculto, _) = self.lstm(x_pack)
         # h_n: (num_layers * num_directions, batch_size, hidden_size)
-        print("EO:",estado_oculto.shape)
         if self.bidirecional:
             estado_oculto_final = torch.cat((estado_oculto[-2], estado_oculto[-1]), dim=1)
         else:
             estado_oculto_final = estado_oculto[-1]    # última camada estado oculto
-        print("EOF:",estado_oculto_final.shape)
         out = self.dropout(estado_oculto_final)
-        print("out:",out.shape)
-        print("out:",out    )
         return self.classificador(out)
