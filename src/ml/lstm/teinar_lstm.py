@@ -6,7 +6,7 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 from ml.lstm.classificador_lstm import ClassificadorLSTM
-from utils.utilidades import path_keypoints2csv, path_modelo_treinado
+from utils.utilidades import gerar_init, path_keypoints2csv, path_modelo_treinado
 from ml.preparar_entrada.preparar_entrada import DatasetPersonalizado
 
 class TreinadorLSTM:
@@ -74,6 +74,8 @@ class TreinadorLSTM:
             self._plotar_grafico_perdas()
 
         os.makedirs(os.path.dirname(self.salvar_em), exist_ok=True)
+        gerar_init(caminho_pasta=path_modelo_treinado)
+
         torch.save(self.modelo_LSTM.state_dict(), self.salvar_em)
         print(f"\n✅ [SALVO: {self.salvar_em}]")
         
