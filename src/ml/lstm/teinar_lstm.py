@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 from ml.lstm.classificador_lstm import ClassificadorLSTM
 from utils.utilidades import gerar_init, path_keypoints2csv, path_modelo_treinado
-from ml.preparar_entrada.preparar_entrada import DatasetPersonalizado
+from src.ml.preparar_entrada.preparar_entrada_treino import DatasetPersonalizado
 
 class TreinadorLSTM:
     def __init__(self,
