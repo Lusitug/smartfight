@@ -1,7 +1,7 @@
 from time import time
 # from pose.extracao.extracao_keypoints import ExtracaoKeypoints
-from ml.lstm.teinar_lstm import TreinadorLSTM
-from utils.utilidades import path_keypoints2csv, path_yolo,path_videos2estimate
+# from ml.lstm.teinar_lstm import TreinadorLSTM
+# from utils.utilidades import path_keypoints2csv, path_yolo, path_videos2estimate, path_modelo_treinado
 # from pose.preprocessamento.data_augumentation import DataAugumentation
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -19,13 +19,15 @@ if __name__ == "__main__":
     
     # extrator.extrair_keypoints_dataset()
     
-    treinador = TreinadorLSTM(neuronios_ocultos=128,
-                            num_epocas=70, 
-                            batch_size=3,
-                            bidirecional=True,
-                            num_camadas=3)
+    # treinador = TreinadorLSTM(neuronios_ocultos=128,
+    #                         num_epocas=70, 
+    #                         batch_size=3,
+    #                         bidirecional=True,
+    #                         num_camadas=3)
     
-    treinador.treinar_modelo(plotar_grafico_perdas=True)
+    # treinador.treinar_modelo(plotar_grafico_perdas=True)
+
     
+
     tempo_final = time()
     print(f"\n\t⏰ [DURAÇÃO TOTAL: {tempo_final - tempo_inicial:.2f}]")
