@@ -1,11 +1,10 @@
 import os
-import ast
-from sympy import false
 import torch
 import numpy as np
 import pandas as pd
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
+from ml.preparar_entrada.validacao_vals import Validacao
 
 class DatasetPersonalizado(Dataset):
     def __init__(self, dataset_csv_path): # verbose = true / false - controlar logs 
@@ -44,16 +43,19 @@ class DatasetPersonalizado(Dataset):
         if 'frame' in df.columns: 
             df = df.drop(columns=['frame'])
 
-        coordenadas_extraidas = df.applymap(lambda s: self.eval_valido(s) if isinstance(s, str) else s) # "(x,y)" -> (x,y) float
+        coordenadas_extraidas = df.applymap(lambda s: Validacao.eval_valido(s) if isinstance(s, str) else s) # "(x,y)" -> (x,y) float
         
         coordenadas = []
 
         for linha in coordenadas_extraidas.itertuples(index=False):
+            if all(ponto is None or ponto == '' for ponto in linha): # ignorar linhas vazias
+                continue
+
             linha_convertida = []
             for ponto in linha:
                 if(isinstance(ponto, (tuple, list)) and
                     len(ponto) == 2 and
-                    all(self.valor_valido(v) for v in ponto)
+                    all(Validacao.valor_valido(v) for v in ponto)
                 ):
                     linha_convertida.append((float(ponto[0]), float(ponto[1])))
                 else:
@@ -79,22 +81,3 @@ class DatasetPersonalizado(Dataset):
         xs_padd = pad_sequence(xs, batch_first=True, padding_value=0)
         # preenche com 0 / tratar esses 0 preenchidos com padding
         return xs_padd, torch.tensor(ys), frames_total_batch
-    
-    def valor_valido(self, valor):
-        # print(valor)
-        if valor is None or str(valor).strip() == '':
-            return False
-        if isinstance(valor, str):
-            valor = str(valor).replace(',', '.')
-        try:
-            float(valor)
-            return True
-        except ValueError:
-            return False
-
-    def eval_valido(self, valor):
-        try:
-            return ast.literal_eval(valor)
-        except (ValueError, SyntaxError) as e:
-            print(f"[ERRO: {e}]")
-            return (0.0, 0.0)

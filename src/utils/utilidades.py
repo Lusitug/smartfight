@@ -10,6 +10,10 @@ path_videos2estimate = os.path.join("src", "dataset")
 
 path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
 
+path_teste1 = os.path.join("src", "soco", "soco.mp4")
+path_teste2 = os.path.join("src", "soco", "soco.csv")
+path_teste0 = os.path.join("src", "soco")
+
 def gerar_init(caminho_pasta):
     init_path = os.path.join(caminho_pasta, '__init__.py')
     if not os.path.exists(init_path):
