@@ -1,11 +1,11 @@
 import pandas as pd
-from utils.labels_keypoints import nome_articulacoes
+from utils.labels_keypoints import LabelKeypoints
 from time import time
 import os
 
 class ConverterKeypointsCSV:
     def __init__(self):
-        self.colunas = nome_articulacoes()
+        self.colunas = LabelKeypoints.nome_articulacoes()
        
     def keypoints2csv(self, lista_keypoints_video, path_saida: str):
         tempo_inicial = time()

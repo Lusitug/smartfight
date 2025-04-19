@@ -7,7 +7,7 @@ from typing import List, Tuple, Optional
 from pose.preprocessamento.pre_processamento import PreProcessamentoVideo
 from pose.preprocessamento.transformar_keypoints import TransformarKeypoints
 from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
-from utils.utilidades import gerar_init
+from utils.utilidades import Utilidades
 
 class ExtracaoKeypoints:
     def __init__(self, modelo_yolo_path: str, dataset_path: str, saida_csv_path: str):
@@ -84,7 +84,7 @@ class ExtracaoKeypoints:
         tempo_inicial = time()
 
         os.makedirs(self.saida_csv_path, exist_ok=True)
-        gerar_init(caminho_pasta=self.saida_csv_path)
+        Utilidades.gerar_init(caminho_pasta=self.saida_csv_path)
 
         # nome da classe
         for classe_golpe in os.listdir(self.dataset_path): 
@@ -97,7 +97,7 @@ class ExtracaoKeypoints:
             
             path_pasta_saida = os.path.join(self.saida_csv_path, classe_golpe)
             os.makedirs(path_pasta_saida, exist_ok=True)
-            gerar_init(caminho_pasta=path_pasta_saida)
+            Utilidades.gerar_init(caminho_pasta=path_pasta_saida)
 
 
             for nome_video in os.listdir(path_pasta_golpe):
@@ -118,7 +118,7 @@ class ExtracaoKeypoints:
                     lista_keypoints_video=lista_keypoints,
                     path_saida=caminho_csv_saida)
                 
-                print(f"\n✅ [SALVO: {caminho_csv_saida}]")
+                # print(f"\n✅ [SALVO: {caminho_csv_saida}]")
 
         tempo_final = time()
         print(f"\n\t⏰ [DURAÇÃO DE EXTRAÇÃO DE KEYPOINTS: {tempo_final - tempo_inicial:.2f}]")

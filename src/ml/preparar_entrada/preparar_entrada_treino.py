@@ -5,6 +5,7 @@ import pandas as pd
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from ml.preparar_entrada.validacao_vals import Validacao
+from utils.utilidades import Utilidades
 
 class DatasetPersonalizado(Dataset):
     def __init__(self, dataset_csv_path): # verbose = true / false - controlar logs 
@@ -17,7 +18,7 @@ class DatasetPersonalizado(Dataset):
         ]) # nome das subpastas que representam o rotulo das classess
         self.golpe_idx = {golpe_nome: idx for idx, golpe_nome in enumerate(self.nome_golpes_classe)}
         
-        print("📁 Classes detectadas:", self.nome_golpes_classe)
+        print("📁 [CLASSES DETECTADAS: ", self.nome_golpes_classe,"]")
        
         for nome_classe in self.nome_golpes_classe:
             classe_path = os.path.join(dataset_csv_path, nome_classe)
@@ -40,8 +41,7 @@ class DatasetPersonalizado(Dataset):
         
         df = pd.read_csv(csv_path)
 
-        if 'frame' in df.columns: 
-            df = df.drop(columns=['frame'])
+        df = Utilidades.remover_coluna_frame(df) 
 
         coordenadas_extraidas = df.applymap(lambda s: Validacao.eval_valido(s) if isinstance(s, str) else s) # "(x,y)" -> (x,y) float
         

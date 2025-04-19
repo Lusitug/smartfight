@@ -2,11 +2,11 @@ import os
 import cv2
 import numpy as np
 from time import time
-from utils.utilidades import path_videos2estimate
-from utils.augmentations_itens import AUGMENTATIONS
+from utils.utilidades import Utilidades
+from utils.augmentations_itens import AugmentationItens
 
 class DataAugumentation:
-    def __init__(self, dataset_path: str = path_videos2estimate):
+    def __init__(self, dataset_path: str = Utilidades.path_videos2estimate):
         self.dataset_path = dataset_path
 
     def aplicar_augumentation_dataset(self):
@@ -39,7 +39,7 @@ class DataAugumentation:
                 print(f"\n🎬 [PROCESSANDO: {nome_video} ({frames_total} FRAMES])")
 
                 writers = {}
-                for nome_tecnica_augm, _ in AUGMENTATIONS.items():
+                for nome_tecnica_augm, _ in AugmentationItens.AUGMENTATIONS.items():
                     nome_video_saida = f"{nome_base_video}_{nome_tecnica_augm}.mp4"
                     path_saida_videos = os.path.join(path_pasta_golpe, nome_video_saida)
 
@@ -55,7 +55,7 @@ class DataAugumentation:
                     if not _:
                         break
 
-                    for nome_tecnica_augm, funcao_augm in AUGMENTATIONS.items():    
+                    for nome_tecnica_augm, funcao_augm in AugmentationItens.AUGMENTATIONS.items():    
                         frame_augm = funcao_augm(frame.copy())
                         writers[nome_tecnica_augm].write(frame_augm)
 

@@ -6,19 +6,19 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 from ml.lstm.classificador_lstm import ClassificadorLSTM
-from utils.utilidades import gerar_init, path_keypoints2csv, path_modelo_treinado
-from src.ml.preparar_entrada.preparar_entrada_treino import DatasetPersonalizado
+from utils.utilidades import Utilidades
+from ml.preparar_entrada.preparar_entrada_treino import DatasetPersonalizado
 
 class TreinadorLSTM:
     def __init__(self,
-                dataset_path=path_keypoints2csv,
+                dataset_path=Utilidades.path_keypoints2csv,
                 featrures_frame=34, neuronios_ocultos=128,
                 num_epocas=10,
                 batch_size=4,
                 bidirecional=False,
                 num_camadas=1,
                 lr=0.001,
-                salvar_em= os.path.join(path_modelo_treinado,"smartfight_lstm.h5")
+                salvar_em= os.path.join(Utilidades.path_modelo_treinado,"smartfight_lstm.h5")
                 ):
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -74,7 +74,7 @@ class TreinadorLSTM:
             self._plotar_grafico_perdas()
 
         os.makedirs(os.path.dirname(self.salvar_em), exist_ok=True)
-        gerar_init(caminho_pasta=path_modelo_treinado)
+        Utilidades.gerar_init(caminho_pasta=Utilidades.path_modelo_treinado)
 
         torch.save(self.modelo_LSTM.state_dict(), self.salvar_em)
         print(f"\n✅ [SALVO: {self.salvar_em}]")
