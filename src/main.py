@@ -1,20 +1,20 @@
-import os
-import uvicorn
+# import os
+# import uvicorn
 from time import time
-from fastapi import FastAPI
-# from utils.utilidades import Utilidades
+# from fastapi import FastAPI
+from utils.utilidades import Utilidades
 # from ml.lstm.teinar_lstm import TreinadorLSTM
-from api.inferencia_api import app as inferencia_app
+# from api.inferencia_api import app as inferencia_app
 # from ml.inferencia.inferencia_lstm import InferenciaLSTM
-# from pose.extracao.extracao_keypoints import ExtracaoKeypoints
+from pose.extracao.extracao_keypoints import ExtracaoKeypoints
 # from pose.preprocessamento.data_augumentation import DataAugumentation
 # from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-app = FastAPI()
+# app = FastAPI()
 
-app.mount("/", inferencia_app)
+# app.mount("/", inferencia_app)
  # uvicorn main:app --reload
 
 if __name__ == "__main__":
@@ -24,11 +24,11 @@ if __name__ == "__main__":
 
     # augumentador.aplicar_augumentation_dataset()
     
-    # extrator = ExtracaoKeypoints( dataset_path= Utilidades.path_videos2estimate,
-    #                              modelo_yolo_path=Utilidades.path_yolo,
-    #                              saida_csv_path=Utilidades.path_keypoints2csv)
+    extrator = ExtracaoKeypoints( dataset_path= Utilidades.path_videos2estimate,
+                                 modelo_yolo_path=Utilidades.path_yolo,
+                                 saida_csv_path=Utilidades.path_keypoints2csv)
     
-    # extrator.extrair_keypoints_dataset()
+    extrator.extrair_keypoints_dataset()
     
     # treinador = TreinadorLSTM(neuronios_ocultos=128,
     #                         num_epocas=70, 
@@ -54,6 +54,7 @@ if __name__ == "__main__":
     # saida = inferencia.prever(path_csv=Utilidades.path_teste2)
     # print(saida)
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    
     tempo_final = time()
     print(f"\n\t⏰ [DURAÇÃO TOTAL: {tempo_final - tempo_inicial:.2f}]")

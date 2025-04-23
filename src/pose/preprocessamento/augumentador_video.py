@@ -35,7 +35,7 @@ class AugumentadorVideo:
         return cv2.GaussianBlur(frame, (11, 11), sigmaX=3.0)
 
     @staticmethod
-    def scale(frame, scale_factor=2.0):
+    def scale(frame, scale_factor=1.5):
         h, w = frame.shape[:2]
         new_w, new_h = int(w * scale_factor), int(h * scale_factor)
         resized = cv2.resize(frame, (new_w, new_h))

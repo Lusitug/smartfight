@@ -16,7 +16,7 @@ class ConverterKeypointsCSV:
             linha = []
             for keypoint in frame:
                 x, y = keypoint
-                linha.append(f"({x:.4f},{y:.4f})") # formata como string "(x, y)"
+                linha.append(f"({x:.6f},{y:.6f})") # formata como string "(x, y)"
             linhas.append(linha)
 
         pasta_saida = os.path.dirname(path_saida)

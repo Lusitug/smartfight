@@ -26,8 +26,7 @@ class ExtracaoKeypoints:
             if predict.keypoints is not None:
                 keypoints = predict.keypoints.xyn.cpu().numpy()
                 print("[PESSOAS DETECTADAS: ", len(keypoints),"]")
-                # evitar detecção de sombras
-                boxes = predict.boxes.xyxy.cpu().numpy()
+                boxes = predict.boxes.xyxy.cpu().numpy() # evitar detecção de sombras
         
                 if len(keypoints) == 0: 
                     return frame, []
