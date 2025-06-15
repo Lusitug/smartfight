@@ -4,8 +4,10 @@ class AugmentationItens:
     AUGMENTATIONS = {
         'noise': AugumentadorVideo.aplicar_ruido,
         'translate': AugumentadorVideo.translate_frame,
-        'shiny+': AugumentadorVideo.aumentar_brilho,
-        'shiny-': AugumentadorVideo.reduzir_brilho,
         'gaussian': AugumentadorVideo.borrao_gaussian,
-        'scale': AugumentadorVideo.scale
+        "flip_h": AugumentadorVideo.flip_h,
+        "flip_v": AugumentadorVideo.flip_v,
+        # 'shiny+': AugumentadorVideo.aumentar_brilho,
+        # 'shiny-': AugumentadorVideo.reduzir_brilho,
+        # 'scale': AugumentadorVideo.scale,
     }

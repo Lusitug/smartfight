@@ -2,11 +2,12 @@
 # import uvicorn
 from time import time
 # from fastapi import FastAPI
-from utils.utilidades import Utilidades
+# from utils.caminhos import Caminhos
 # from ml.lstm.teinar_lstm import TreinadorLSTM
 # from api.inferencia_api import app as inferencia_app
 # from ml.inferencia.inferencia_lstm import InferenciaLSTM
-from pose.extracao.extracao_keypoints import ExtracaoKeypoints
+# from pose.extracao.extracao_keypoints import ExtracaoKeypoints
+from analise.media_guarda import DefinirGuarda
 # from pose.preprocessamento.data_augumentation import DataAugumentation
 # from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
 
@@ -20,15 +21,39 @@ from pose.extracao.extracao_keypoints import ExtracaoKeypoints
 if __name__ == "__main__":
     tempo_inicial = time()
     
+    ## teste extracao keypoints
+
+    guarda = DefinirGuarda()
+
+    guarda.converter_dataset_guarda_em_csv()
+    guarda.criar_modelo_media_guarda()
+    guarda.plotar_modelo()
+
+    
+    # extrator = ExtracaoKeypoints( dataset_path= Caminhos.path_videos2estimate,
+    #                              modelo_yolo_path=Caminhos.path_yolo,
+    #                              saida_csv_path=Caminhos.path_keypoints2csv)
+    
+    # extrator.extrair_keypoints_dataset()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     # augumentador = DataAugumentation()
 
     # augumentador.aplicar_augumentation_dataset()
-    
-    extrator = ExtracaoKeypoints( dataset_path= Utilidades.path_videos2estimate,
-                                 modelo_yolo_path=Utilidades.path_yolo,
-                                 saida_csv_path=Utilidades.path_keypoints2csv)
-    
-    extrator.extrair_keypoints_dataset()
     
     # treinador = TreinadorLSTM(neuronios_ocultos=128,
     #                         num_epocas=70, 
@@ -39,19 +64,22 @@ if __name__ == "__main__":
     # treinador.treinar_modelo(plotar_grafico_perdas=True)
 
 
-    # extrair_kps = ExtracaoKeypoints(modelo_yolo_path=Utilidades.path_yolo, 
+    ## teste inferencia
+
+
+    # extrair_kps = ExtracaoKeypoints(modelo_yolo_path=Caminhos.path_yolo, 
     #                                 dataset_path="",
     #                                 saida_csv_path="")
     
-    # keypoints = extrair_kps.processar_video(Utilidades.path_teste1)
+    # keypoints = extrair_kps.processar_video(Caminhos.path_teste1)
     # salvar_csv = ConverterKeypointsCSV()
 
-    # salvar_csv.keypoints2csv(path_saida=os.path.join(Utilidades.path_teste0, "soco.csv"),
+    # salvar_csv.keypoints2csv(path_saida=os.path.join(Caminhos.path_teste0, "soco.csv"),
     #                          lista_keypoints_video=keypoints)
     
     # inferencia = InferenciaLSTM(bidirecional=True, num_camadas=3)
     
-    # saida = inferencia.prever(path_csv=Utilidades.path_teste2)
+    # saida = inferencia.prever(path_csv=Caminhos.path_teste2)
     # print(saida)
 
     # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

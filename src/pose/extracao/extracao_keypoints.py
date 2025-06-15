@@ -7,7 +7,7 @@ from typing import List, Tuple, Optional
 from pose.preprocessamento.pre_processamento import PreProcessamentoVideo
 from pose.preprocessamento.transformar_keypoints import TransformarKeypoints
 from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
-from utils.utilidades import Utilidades
+from utils.globais import Globais
 
 class ExtracaoKeypoints:
     def __init__(self, modelo_yolo_path: str, dataset_path: str, saida_csv_path: str):
@@ -37,11 +37,23 @@ class ExtracaoKeypoints:
                     areas = (boxes[:,2] - boxes[:,0]) * (boxes[:,3] - boxes[:,1])
                     maior_idx = np.argmax(areas)
                     coordenadas = keypoints[maior_idx]
+
+                if coordenadas.size == 0:
+                    return frame, []
                     
-                # for coordenadas in keypoints:
-                lista_keypoints = [(coordenadas[i][0], coordenadas[i][1]) for i in range(17)]
+                lista_keypoints = []
+                for i in range(17):
+                    if i < len(coordenadas):
+                        if not np.isnan(coordenadas[i][0]) and not np.isnan(coordenadas[i][1]):
+                            lista_keypoints.append((float(coordenadas[i][0]), float(coordenadas[i][1])))
+                        else:
+                            lista_keypoints.append((0.0, 0.0))
+                    else:
+                        lista_keypoints.append((0.0, 0.0))
+                # # for coordenadas in keypoints:
+                # lista_keypoints = [(coordenadas[i][0], coordenadas[i][1]) for i in range(17)]
                 frame_keypoints.append(lista_keypoints)
-        
+        print("FK", frame_keypoints)
         return frame, frame_keypoints
 
     def processar_video(self, path_videos: str) -> Optional[np.ndarray]:
@@ -83,7 +95,7 @@ class ExtracaoKeypoints:
         tempo_inicial = time()
 
         os.makedirs(self.saida_csv_path, exist_ok=True)
-        Utilidades.gerar_init(caminho_pasta=self.saida_csv_path)
+        Globais.gerar_init(caminho_pasta=self.saida_csv_path)
 
         # nome da classe
         for classe_golpe in os.listdir(self.dataset_path): 
@@ -96,11 +108,18 @@ class ExtracaoKeypoints:
             
             path_pasta_saida = os.path.join(self.saida_csv_path, classe_golpe)
             os.makedirs(path_pasta_saida, exist_ok=True)
-            Utilidades.gerar_init(caminho_pasta=path_pasta_saida)
+            Globais.gerar_init(caminho_pasta=path_pasta_saida)
 
 
             for nome_video in os.listdir(path_pasta_golpe):
                 if not nome_video.lower().endswith(('.mp4', '.avi', '.mov')):
+                    continue
+
+                nome_csv_saida = os.path.splitext(nome_video)[0] + ".csv" 
+                caminho_csv_saida = os.path.join(path_pasta_saida, nome_csv_saida)
+
+                if os.path.exists(caminho_csv_saida):
+                    print(f"⏩ [IGNORADO - JÁ EXISTE: {caminho_csv_saida}]")
                     continue
 
                 path_videos = os.path.join(path_pasta_golpe, nome_video)
@@ -109,9 +128,6 @@ class ExtracaoKeypoints:
 
                 if lista_keypoints is None:
                     continue
-
-                nome_csv_saida = os.path.splitext(nome_video)[0] + ".csv" 
-                caminho_csv_saida = os.path.join(path_pasta_saida, nome_csv_saida)
 
                 self.conversor_keypoint_csv.keypoints2csv(
                     lista_keypoints_video=lista_keypoints,

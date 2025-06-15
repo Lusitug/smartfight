@@ -2,11 +2,11 @@ import os
 import cv2
 import numpy as np
 from time import time
-from utils.utilidades import Utilidades
+from src.utils.caminhos import Caminhos
 from utils.augmentations_itens import AugmentationItens
 
 class DataAugumentation:
-    def __init__(self, dataset_path: str = Utilidades.path_videos2estimate):
+    def __init__(self, dataset_path: str = Caminhos.path_videos2estimate):
         self.dataset_path = dataset_path
 
     def aplicar_augumentation_dataset(self):

@@ -4,10 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import cv2
 import numpy as np
-from ml.inferencia.inferencia_lstm import InferenciaLSTM
+# from ml.inferencia.inferencia_lstm import InferenciaLSTM
 # from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
 from pose.extracao.extracao_keypoints import ExtracaoKeypoints
-from utils.utilidades import Utilidades
+from src.utils.caminhos import Caminhos
 
 # classe teste para receber videos via upload pelo navegador
 
@@ -23,7 +23,7 @@ app.add_middleware(
 
 inferencia = InferenciaLSTM(bidirecional=True, num_camadas=3)
 
-extrator = ExtracaoKeypoints(modelo_yolo_path=Utilidades.path_yolo,
+extrator = ExtracaoKeypoints(modelo_yolo_path=Caminhos.path_yolo,
                              dataset_path="", saida_csv_path="")
 
 # conversor = ConverterKeypointsCSV()
@@ -33,13 +33,13 @@ extrator = ExtracaoKeypoints(modelo_yolo_path=Utilidades.path_yolo,
 async def inferencia_video(file: UploadFile = File(...)):
     print("Endpoint /inferencia-video chamado")
     try:
-        video_path = os.path.join(Utilidades.path_teste0, file.filename)
+        video_path = os.path.join(Caminhos.path_teste0, file.filename)
         with open(video_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
         print("[ARQUIVO EM ANALISE: \n\t TEMPORARIAMENTE SALVO: ", video_path,"]")
 
-        # csv_path = os.path.join(Utilidades.path_teste0, "soco.csv")
+        # csv_path = os.path.join(Caminhos.path_teste0, "soco.csv")
 
         keypoints = extrator.processar_video(path_videos=video_path)
         print("len kps: ", len(keypoints))

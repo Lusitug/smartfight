@@ -14,21 +14,21 @@ class AugumentadorVideo:
         M = np.float32([[1, 0, tx], [0, 1, ty]])
         return cv2.warpAffine(frame, M, (frame.shape[1], frame.shape[0]))
               
-    @staticmethod
-    def reduzir_brilho(frame, fator=0.2):
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        h, s, v = cv2.split(hsv)
-        v = np.clip(v.astype(np.float32) * fator, 0, 255).astype(np.uint8)
-        hsv_mod = cv2.merge((h, s, v))
-        return cv2.cvtColor(hsv_mod, cv2.COLOR_HSV2BGR)
+    # @staticmethod
+    # def reduzir_brilho(frame, fator=0.2):
+    #     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    #     h, s, v = cv2.split(hsv)
+    #     v = np.clip(v.astype(np.float32) * fator, 0, 255).astype(np.uint8)
+    #     hsv_mod = cv2.merge((h, s, v))
+    #     return cv2.cvtColor(hsv_mod, cv2.COLOR_HSV2BGR)
 
-    @staticmethod
-    def aumentar_brilho(frame, fator=3.0):
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        h, s, v = cv2.split(hsv)
-        v = np.clip(v.astype(np.float32) * fator, 0, 255).astype(np.uint8)
-        hsv_mod = cv2.merge((h, s, v))
-        return cv2.cvtColor(hsv_mod, cv2.COLOR_HSV2BGR)
+    # @staticmethod
+    # def aumentar_brilho(frame, fator=3.0):
+    #     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    #     h, s, v = cv2.split(hsv)
+    #     v = np.clip(v.astype(np.float32) * fator, 0, 255).astype(np.uint8)
+    #     hsv_mod = cv2.merge((h, s, v))
+    #     return cv2.cvtColor(hsv_mod, cv2.COLOR_HSV2BGR)
 
     @staticmethod
     def borrao_gaussian(frame):
@@ -42,3 +42,11 @@ class AugumentadorVideo:
         x_start = (new_w - w) // 2
         y_start = (new_h - h) // 2
         return resized[y_start:y_start + h, x_start:x_start + w]
+    
+    @staticmethod
+    def flip_h(frame):
+        return cv2.flip(frame, 1)
+    
+    @staticmethod
+    def flip_v(frame):
+        return cv2.flip(frame, 0)

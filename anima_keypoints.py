@@ -1,14 +1,14 @@
 import os
-# import ast  
+import ast  
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-from src.utils.utilidades import Utilidades
-from src.ml.preparar_entrada.validacao_vals import Validacao
+from src.utils.caminhos import Caminhos
+# from src.ml.preparar_entrada.validacao_vals import Validacao
 import cv2
 
-path_csv =  os.path.join(Utilidades.path_keypoints2csv, "CruzadoEsquerdo", "cruzado-e_9DwysGYQ.csv")   
-video_path =  os.path.join(Utilidades.path_videos2estimate, "CruzadoEsquerdo", "cruzado-e_9DwysGYQ.mp4")   
+path_csv =  os.path.join(Caminhos.teste_periodiciodade7)
+video_path =  os.path.join(Caminhos.teste_periodiciodade8)
 
 df = pd.read_csv(path_csv)
 df.columns = df.columns.str.strip() # remove caracteres indesejados
@@ -19,7 +19,7 @@ print(labels_keypoints)
 
 # strings "(x, y)" para tuplas float (x, y)
 for col in labels_keypoints:
-    df[col] = df[col].apply(lambda s: Validacao.eval_valido(s) if isinstance(s, str) else (0.0, 0.0))
+    df[col] = df[col].apply(lambda s: ast.literal_eval(s) if isinstance(s, str) else (0.0, 0.0))
 
 # transforma odf em uma lista de dicionários por frame
 dados_frames = []
