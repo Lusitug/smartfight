@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 from time import time
-from src.utils.caminhos import Caminhos
+from utils.caminhos import Caminhos
 from utils.augmentations_itens import AugmentationItens
 
 class DataAugumentation:
@@ -40,8 +40,16 @@ class DataAugumentation:
 
                 writers = {}
                 for nome_tecnica_augm, _ in AugmentationItens.AUGMENTATIONS.items():
+                    # Cria nova pasta para a técnica, no mesmo nível da pasta original
+                    pasta_augm = os.path.join(self.dataset_path, f"{classe_golpe}_{nome_tecnica_augm}")
+                    os.makedirs(pasta_augm, exist_ok=True)
+
                     nome_video_saida = f"{nome_base_video}_{nome_tecnica_augm}.mp4"
-                    path_saida_videos = os.path.join(path_pasta_golpe, nome_video_saida)
+                    path_saida_videos = os.path.join(pasta_augm, nome_video_saida)
+
+                    if os.path.exists(path_saida_videos):
+                        print(f" [ VIDEO IGNORADO: {path_saida_videos} - JA LIDO.\n ]")
+                        continue
 
                     writers[nome_tecnica_augm] = cv2.VideoWriter(
                         path_saida_videos,
@@ -62,7 +70,7 @@ class DataAugumentation:
                 capt.release()
                 for nome_tecnica_augm, writer in writers.items():
                     writer.release()
-                    print(f"\n✅ [SALVO: {os.path.join(path_pasta_golpe, f'{nome_base_video}_{nome_tecnica_augm}.mp4')}]")
+                    print(f"\n✅ [SALVO: {os.path.join(self.dataset_path, f'{classe_golpe}_{nome_tecnica_augm}', f'{nome_base_video}_{nome_tecnica_augm}.mp4')}]")
         
         tempo_final = time()
         print(f"\n\t⏰ [DURAÇÃO DE PRE PROCESSAMENTO: {tempo_final - tempo_inicial:.2f}]")

@@ -2,13 +2,13 @@
 # import uvicorn
 from time import time
 # from fastapi import FastAPI
-# from utils.caminhos import Caminhos
+from utils.caminhos import Caminhos
 # from ml.lstm.teinar_lstm import TreinadorLSTM
 # from api.inferencia_api import app as inferencia_app
 # from ml.inferencia.inferencia_lstm import InferenciaLSTM
-# from pose.extracao.extracao_keypoints import ExtracaoKeypoints
-from analise.media_guarda import DefinirGuarda
-# from pose.preprocessamento.data_augumentation import DataAugumentation
+from pose.extracao.extracao_keypoints import ExtracaoKeypoints
+# from analise.media_guarda import DefinirGuarda
+from pose.preprocessamento.data_augumentation import DataAugumentation
 # from pose.conversao.converter_keypoints_csv import ConverterKeypointsCSV
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -23,11 +23,11 @@ if __name__ == "__main__":
     
     ## teste extracao keypoints
 
-    guarda = DefinirGuarda()
+    # guarda = DefinirGuarda()
 
-    guarda.converter_dataset_guarda_em_csv()
-    guarda.criar_modelo_media_guarda()
-    guarda.plotar_modelo()
+    # guarda.converter_dataset_guarda_em_csv()
+    # guarda.criar_modelo_media_guarda()
+    # guarda.plotar_modelo()
 
     
     # extrator = ExtracaoKeypoints( dataset_path= Caminhos.path_videos2estimate,
@@ -35,19 +35,6 @@ if __name__ == "__main__":
     #                              saida_csv_path=Caminhos.path_keypoints2csv)
     
     # extrator.extrair_keypoints_dataset()
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
