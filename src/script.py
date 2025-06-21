@@ -1,13 +1,11 @@
-from gettext import find
-
-from cv2 import norm
 from utils.caminhos import Caminhos
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import dtw 
 import ast
-from scipy.signal import find_peaks
+from dtw import dtw, dtwPlot
+from sklearn.preprocessing import MinMaxScaler
+from dtaidistance import dtw as dtw2
 
 # pre processamento
 def ast_func(points):
@@ -39,108 +37,24 @@ def converter_array32(df: pd.DataFrame) -> np.ndarray:
     vetores = df.apply(converter_frame_vetor, axis=1).values.tolist()
     return np.array(vetores, dtype=np.float32)
 
-# fft
-def analisar_periodos(keypoints: np.ndarray, ponto: int = 0):
-    # fft
-    idx_y = ponto * 2
-    y = keypoints[:,idx_y]
+# df = pd.read_csv(Caminhos.teste_periodiciodade10)
+# df = pd.read_csv(Caminhos.teste_periodiciodade7)
+df = pd.read_csv(Caminhos.teste_periodiciodade11)
+articulação_l_w = np.array([ast_func(point) for point in df["r_w"].values])
+# print(articulação_l_w.shape) # os frames e x,y
+articulação_l_w_1d = np.linalg.norm(articulação_l_w, axis=1) if articulação_l_w.ndim > 1 else articulação_l_w
+# print(articulação_l_w_1d.shape) # so os frames
 
-    fft_result = np.fft.fft(y - np.mean(y))
-    fft_freq = np.fft.fftfreq(len(y))
+# analisar_periodos(df, 15)
 
-    print(f"resultado fft : {fft_result} ")
-    print(f"frequencia associada ao valor fft : {fft_freq} ")
-   
-    # verifica o periodo em que há picos - a quantos frames há picos
-    half = len(fft_freq) // 2
-    fft_freq_pos = fft_freq[1:half]
-    fft_result_pos = np.abs(fft_result[1:half])
+df2 = pd.read_csv(Caminhos.teste_periodiciodade12)
+# df2 = pd.read_csv(Caminhos.teste_periodiciodade11)
+articulação_r_w = np.array([ast_func(point) for point in df2["l_w"].values])
+# print(articulação_r_w.shape) # os frames e x,y
+articulação_r_w_1d = np.linalg.norm(articulação_r_w, axis=1) if articulação_r_w.ndim > 1 else articulação_r_w
+# print(articulação_r_w_1d.shape) # so os frames
 
-    peak_idx = np.argmax(fft_result_pos)
-    freq_dominante = fft_freq_pos[peak_idx]
-    periodo = 1 / freq_dominante if freq_dominante != 0 else np.nan
+# df = converter_array32(df) # soco do dataset / as vezes outro soco curto
+# df2 = converter_array32(df2) # soco curto
 
-    print(f"Frequência dominante: {freq_dominante:.5f} ciclos/frame")
-    print(f"Período dominante: {periodo:.2f} frames por ciclo")
-
-    # ff2
-    plt.figure(figsize=(16, 8))  # Mais largo e alto
-
-    # Gráfico 1: Sinal no tempo
-    plt.subplot(2, 1, 1)  # 2 linhas, 1 coluna, posição 1
-    plt.plot(y)
-    plt.title("Sinal no tempo (coordenada Y do ponto)")
-    plt.xticks(np.arange(0, len(y), 150))
-
-    # Gráfico 2: FFT
-    plt.subplot(2, 1, 2)  # 2 linhas, 1 coluna, posição 2
-    plt.plot(fft_freq[:len(fft_freq)//2], np.abs(fft_result)[:len(fft_result)//2])
-    plt.title("FFT - Frequências dominantes")
-    plt.xlabel("Frequência")
-    plt.ylabel("Amplitude")
-    plt.xticks(np.arange(0, 0.5, 0.01))
-
-    plt.tight_layout()
-    plt.show()
-    """
-    # fft0 e fft1
-    # plt.figure(figsize=(14, 4))
-    
-
-    # plt.subplot(1, 2, 1)
-    # plt.plot(y)
-    # plt.title("Sinal no tempo (coordenada Y do ponto)")
-
-    # plt.subplot(1, 2, 1)
-    # plt.plot(y)
-    # plt.title("Sinal no tempo (coordenada Y do ponto)")
-    # plt.xticks(np.arange(0, len(y), 150))  # <-- Adiciona ticks a cada 150 frames
-    
-    # plt.subplot(1, 2, 2)
-    # plt.plot(fft_freq[:len(fft_freq)//2], np.abs(fft_result)[:len(fft_result)//2])
-    # plt.title("FFT - Frequências dominantes")
-    # plt.xlabel("Frequência")
-    # plt.ylabel("Amplitude")
-
-    # plt.subplot(1, 2, 2)
-    # plt.plot(fft_freq[:len(fft_freq)//2], np.abs(fft_result)[:len(fft_result)//2])
-    # plt.title("FFT - Frequências dominantes")
-    # plt.xlabel("Frequência")
-    # plt.ylabel("Amplitude")
-    # plt.xticks(np.arange(0, 0.5, 0.01))  # Ajuste conforme necessário para o seu eixo de frequência
-   
-    # plt.tight_layout()
-    # plt.show()
-    """
-
-
-def testar_dtw(kps1: np.ndarray, kps2: np.ndarray):
-    distance, cost_matrix, acc_cost_matrix, path = dtw(
-        kps1,
-        kps2,
-        dist=lambda x, y: norm(x-y))
-
-
-    print(f"Distância DTW: {distance:.2f}")
-
-    plt.imshow(acc_cost_matrix.T, origin='lower', cmap='gray', interpolation='nearest')
-    plt.plot(path[0], path[1], 'w')  # Caminho ótimo
-    plt.title('Matriz de Custo Acumulado (DTW)')
-    plt.xlabel('Seq 1')
-    plt.ylabel('Seq 2')
-    plt.show()
-
-df = pd.read_csv(Caminhos.teste_periodiciodade7)
-df2 = pd.read_csv(Caminhos.teste_periodiciodade11)
-
-kps = np.array([ast_func(point) for point in df["l_w"].values])
-
-# diffs = np.diff(kps, axis=0)
-# speed = np.linalg.norm(diffs, axis=1)
-# peaks, _ = find_peaks(speed, height=np.mean(speed)+2*np.std(speed))
-
-df = converter_array32(df)
-df2 = converter_array32(df2)
-
-analisar_periodos(df, 9)
-# testar_dtw(df, df2)
+# print(len(articulação_l_w_1d))

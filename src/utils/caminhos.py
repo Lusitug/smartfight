@@ -11,13 +11,14 @@ class Caminhos:
 
     path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
     
-    teste_periodiciodade10 = os.path.join("src", "CC.csv")
     teste_periodiciodade11 = os.path.join("src", "direto_EyHSY2mj.csv")
+    teste_periodiciodade12 = os.path.join("src", "direto-seg_H3GhvS2O.csv")
 
     teste_periodiciodade7 = os.path.join("src", "direto-seg1_acL4ciwa.csv")
     teste_periodiciodade8 = os.path.join("src", "dataset", "Direto", "direto-seg1_acL4ciwa.mov")
     
     teste_periodiciodade9 = os.path.join("src", "c.csv")
+    teste_periodiciodade10 = os.path.join("src", "CC.csv")
     
     dataset_guarda = os.path.join("src", "data_guarda")
     saida_csv_guarda = os.path.join("src", "saida", "definicao_guarda")

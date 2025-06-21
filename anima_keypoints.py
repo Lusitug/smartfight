@@ -7,7 +7,7 @@ from src.utils.caminhos import Caminhos
 # from src.ml.preparar_entrada.validacao_vals import Validacao
 import cv2
 
-path_csv =  os.path.join(Caminhos.teste_periodiciodade11)
+path_csv =  os.path.join(Caminhos.teste_periodiciodade12)
 video_path =  os.path.join(Caminhos.teste_periodiciodade8)
 
 df = pd.read_csv(path_csv)
