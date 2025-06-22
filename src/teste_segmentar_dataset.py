@@ -1,16 +1,3 @@
-from re import X
-from utils.caminhos import Caminhos
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import ast
-from dtw import dtw, dtwPlot
-from sklearn.decomposition import PCA
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from dtaidistance import dtw as dtw2
-import os
-from typing import List
 # pre processamento
 def ast_func(points):
     return ast.literal_eval(points)
@@ -42,10 +29,8 @@ def converter_array32(df: pd.DataFrame) -> np.ndarray:
     return np.array(vetores, dtype=np.float32)
 
 
-# df = converter_array32(df) # soco do dataset / as vezes outro soco curto
-# df2 = converter_array32(df2) # soco curto
 
-
+##########################################################
 # OBTER LABELS DO DATASET classe
 class DatasetKeypoints:
     def __init__(self, dataset_csv_path: str):
@@ -69,6 +54,7 @@ class DatasetKeypoints:
                 if arquivo.endswith(".csv"):
                     self.paths_csv.append(os.path.join(classe_path, arquivo))
                     self.rotulos.append(self.golpe_idx[nome_classe])
+
 # KNN DTW CLASSE
 class KNN_DTW:
     def __init__(self, k = 5):
@@ -81,15 +67,16 @@ class KNN_DTW:
     def predict(self, X_test):
         y_pred = []
         for amostra in X_test:
-            distancias = [dtw(amostra, amostra_treino, distance_only=True).distance
-                          for amostra_treino in self.X_train]
-            indices = np.argsort(distancias)[:self.k]
+            distancia = [dtw2.distance(amostra, amostra_treino)
+                         for amostra_treino in self.X_train]
+            indices = np.argsort(distancia)[:self.k]
             votos = [self.y_train[i] for i in indices]
             classe_comum = max(set(votos), key=votos.count)
             y_pred.append(classe_comum)
-        return y_pred
+            return y_pred
+##########################################################
 
-# SEGMENTAR DATASET
+## CORTAR CSV testes
 def segmentar_com_janela_sliding(array: np.ndarray, janela=5, passo=20) -> List[np.ndarray]:
     segmentos = []
     for i in range(0, len(array) - janela + 1, passo):
@@ -98,19 +85,54 @@ def segmentar_com_janela_sliding(array: np.ndarray, janela=5, passo=20) -> List[
             segmentos.append(trecho)
     return segmentos
 
+
+##########################################################
 # Exemplo: articulação_l_w_1d tem shape (N,)
-# segmentos = segmentar_com_janela_sliding(articulação_l_w_1d, janela=50, passo=50)
-# print(f"Total de segmentos: {len(segmentos)}")
-# print(f"Shape de um segmento: {segmentos[0].shape}")
-
-# for i in range(15):
-#     plt.plot(segmentos[i])
-#     plt.title(f"Segmento {i}")
-#     plt.show()
+segmentos = segmentar_com_janela_sliding(articulação_l_w_1d, janela=59, passo=59)
+print(f"Total de segmentos: {len(segmentos)}")
+print(f"Shape de um segmento: {segmentos[0].shape}")
 
 
-# KNN-DTW APLICAÇÃO
+for i in range(15):
+    plt.plot(segmentos[i])
+    plt.title(f"Segmento {i}")
+    plt.show()
 
+
+############################# nem ta sendo usado
+## PCA testes
+def pca_teste(X_segmentado: List[np.ndarray], n_components: int = 80):
+    X_flat = np.array([segmento.flatten() for segmento in X_segmentado])
+    pca = PCA(n_components=n_components)
+    X_pca = pca.fit_transform(X_flat)
+    return X_pca, pca
+
+aa, bb = pca_teste(segmentos, n_components=50)
+
+print(aa)
+print(bb)
+
+plt.figure(figsize=(8, 6))
+plt.scatter(aa[:, 0], aa[:, 1], c='blue', alpha=0.7)
+plt.title('PCA - Componentes Principais dos Segmentos')
+plt.xlabel('Componente Principal 1')
+plt.ylabel('Componente Principal 2')
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(8, 6))
+plt.scatter(aa[:, 0], aa[:, 1], c='blue', alpha=0.7)
+for i, (x, y) in enumerate(zip(aa[:, 0], aa[:, 1])):
+    plt.text(x, y, str(i), fontsize=8)  # Mostra o índice do segmento
+plt.title('PCA - Componentes Principais dos Segmentos')
+plt.xlabel('Componente Principal 1')
+plt.ylabel('Componente Principal 2')
+plt.grid(True)
+plt.show()
+
+######################
+
+# KNN-DTW testes
 dataset = DatasetKeypoints(Caminhos.dataset_csv)
 X_segmentado, y = [], []
 
@@ -144,4 +166,4 @@ else:
     y_pred_externo = modelo.predict(segmentos_teste)
     for i, pred in enumerate(y_pred_externo):
         nome_classe = dataset.nome_golpes_classe[pred]
-        print(f"Predito como ➤  {nome_classe}")
+        print(f"Predito como ➤    {nome_classe}")

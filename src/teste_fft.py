@@ -89,4 +89,5 @@ def analisar_periodos(keypoints: np.ndarray, ponto: int = 0):
 
     
 df = 0 # ler csv
+# df = converter_array32(df) # soco do dataset / as vezes outro soco curto
 analisar_periodos(df, 9)

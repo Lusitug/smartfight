@@ -8,6 +8,7 @@ class Caminhos:
     path_keypoints2csv =  os.path.join("src", "saidas", "keypoints_extraidos")
 
     path_videos2estimate = os.path.join("src", "dataset")
+    dataset_csv = os.path.join("src", "DATASET_CSV")
 
     path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
     
@@ -20,6 +21,18 @@ class Caminhos:
     teste_periodiciodade9 = os.path.join("src", "c.csv")
     teste_periodiciodade10 = os.path.join("src", "CC.csv")
     
+
+    teste_periodiciodade13 =  os.path.join("src", "joelho-direito1_XN53OaK9.csv")
+    teste_periodiciodade14 =  os.path.join("src", "joelho.csv")
+
+    teste_periodiciodade15 =  os.path.join("src", "direto4_cxPxW3KR.csv")
+
+
+
+
+
+
+
     dataset_guarda = os.path.join("src", "data_guarda")
     saida_csv_guarda = os.path.join("src", "saida", "definicao_guarda")
     saida_media_guarda = os.path.join("src", "saida", "definicao_guarda", "media")

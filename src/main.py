@@ -30,11 +30,11 @@ if __name__ == "__main__":
     # guarda.plotar_modelo()
 
     
-    # extrator = ExtracaoKeypoints( dataset_path= Caminhos.path_videos2estimate,
-    #                              modelo_yolo_path=Caminhos.path_yolo,
-    #                              saida_csv_path=Caminhos.path_keypoints2csv)
+    extrator = ExtracaoKeypoints( dataset_path= Caminhos.path_videos2estimate,
+                                 modelo_yolo_path=Caminhos.path_yolo,
+                                 saida_csv_path=Caminhos.path_keypoints2csv)
     
-    # extrator.extrair_keypoints_dataset()
+    extrator.extrair_keypoints_dataset()
 
 
 
