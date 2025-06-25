@@ -1,4 +1,5 @@
 from re import X
+from utils.globais import Globais
 from utils.caminhos import Caminhos
 import pandas as pd
 import numpy as np
@@ -11,7 +12,64 @@ from sklearn.metrics import classification_report
 from dtaidistance import dtw as dtw2
 import os
 from typing import List
-# pre processamento
+from analise.visualizacao_movimento import VisualizarMovimentoArticulacao
+from analise.analisar_periodos import AnalisarCiclosDataset
+from analise.dtw_analise import AnalisarSequenciasDTW
+# df = pd.read_csv(Caminhos.teste_periodiciodade7)
+# articulacao_l_w = np.array([ast_func(point) for point in df["l_w"].values])
+# # df = converter_array32(df) # soco do dataset
+# articulacao_l_w_1d = np.linalg.norm(articulacao_l_w, axis=1) if articulacao_l_w.ndim > 1 else articulacao_l_w
+
+# articulacao = np.array([Globais.ast_func(point) for point in df["l_w"].values])
+# articulacao_1d = np.linalg.norm(articulacao, axis=1) if articulacao.ndim > 1 else articulacao
+
+# visualização
+df = pd.read_csv(Caminhos.teste_periodiciodade7)
+# visu = VisualizarMovimentoArticulacao(golpe_csv=df)
+# visu.plotar_movimento01(["l_s","l_el","l_w"])
+
+# fft
+# df = Globais.converter_array32(df)
+# analise = AnalisarCiclosDataset(golpe_csv=df)
+# feq =  analise.verificar_periodo(idx_ponto=9)
+# # obtendo frequencia
+# print(f" {feq['period_frames']:.2f} " )
+
+# dtw
+df2 = pd.read_csv(Caminhos.teste_periodiciodade15)
+analise2 = AnalisarSequenciasDTW(series1=df, series2=df2, articulacao="l_w")
+distance_plot = analise2.calcular_distancia_dtw_lib(tipo_distancia="squared_euclidean_distance")
+print(distance_plot.distance)
+print(distance_plot.normalizedDistance)
+final = analise2.plotar_dtw_lib(alinhamento=distance_plot)
+# print(final)
+distance_plot2, similaridad, paths = analise2.calcular_distancia_dtaidistance_lib()
+print(distance_plot2)
+print(similaridad)
+analise2.plotar_dtaidistance_lib(melhor_caminho=paths)
+
+
+# dtw-knn (testar outros ml)
+
+
+
+
+
+# print(df)
+
+
+
+
+
+
+
+
+
+
+"""  
+
+
+
 def ast_func(points):
     return ast.literal_eval(points)
 
@@ -42,106 +100,123 @@ def converter_array32(df: pd.DataFrame) -> np.ndarray:
     return np.array(vetores, dtype=np.float32)
 
 
-# df = converter_array32(df) # soco do dataset / as vezes outro soco curto
+# distance metric between diferent signals
+# dtw1 - video longo x video curto
+# dtw2 - video curto x video curto
+
+# df = pd.read_csv(Caminhos.teste_periodiciodade10)
+df = pd.read_csv(Caminhos.teste_periodiciodade7)
+articulação_l_w = np.array([ast_func(point) for point in df["l_w"].values])
+# df = converter_array32(df) # soco do dataset
+
+df2 = pd.read_csv(Caminhos.teste_periodiciodade12)
+articulação_r_w = np.array([ast_func(point) for point in df2["l_w"].values])
 # df2 = converter_array32(df2) # soco curto
 
+articulação_l_w_1d = np.linalg.norm(articulação_l_w, axis=1) if articulação_l_w.ndim > 1 else articulação_l_w
+articulação_r_w_1d = np.linalg.norm(articulação_r_w, axis=1) if articulação_r_w.ndim > 1 else articulação_r_w
 
-# OBTER LABELS DO DATASET classe
-class DatasetKeypoints:
-    def __init__(self, dataset_csv_path: str):
-        self.dataset_csv_path = dataset_csv_path
+def squared_euclidean_distance(x, y):  ## melhor resultado, menor distancia
+    return np.sum((x - y) ** 2)
 
-        self.nome_golpes_classe = sorted([
-            pasta.strip()
-            for pasta in os.listdir(dataset_csv_path)
-            if os.path.isdir(os.path.join(dataset_csv_path, pasta)) and not pasta.startswith("__")
-        ])
+def chebyshev_distance(x, y):
+    return np.max(np.abs(x - y))
 
-        self.golpe_idx = {golpe: idx for idx, golpe in enumerate(self.nome_golpes_classe)}
-        self.paths_csv = []
-        self.rotulos = []
+def manhattan_distance(x, y):
+    return np.sum(np.abs(x - y))
 
-        print("📁 [CLASSES DETECTADAS: ", self.nome_golpes_classe, "]")
+def euclidean_distance(x, y):
+    return np.sqrt(np.sum((x - y) ** 2))
 
-        for nome_classe in self.nome_golpes_classe:
-            classe_path = os.path.join(dataset_csv_path, nome_classe)
-            for arquivo in os.listdir(classe_path):
-                if arquivo.endswith(".csv"):
-                    self.paths_csv.append(os.path.join(classe_path, arquivo))
-                    self.rotulos.append(self.golpe_idx[nome_classe])
-# KNN DTW CLASSE
-class KNN_DTW:
-    def __init__(self, k = 5):
-        self.k = k
-    
-    def fit(self, X_train, y_train):
-        self.X_train = X_train
-        self.y_train = y_train
+def cosine_distance(x, y): # nao funcionou
+    return 1 - np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))
 
-    def predict(self, X_test):
-        y_pred = []
-        for amostra in X_test:
-            distancias = [dtw(amostra, amostra_treino, distance_only=True).distance
-                          for amostra_treino in self.X_train]
-            indices = np.argsort(distancias)[:self.k]
-            votos = [self.y_train[i] for i in indices]
-            classe_comum = max(set(votos), key=votos.count)
-            y_pred.append(classe_comum)
-        return y_pred
-
-# SEGMENTAR DATASET
-def segmentar_com_janela_sliding(array: np.ndarray, janela=5, passo=20) -> List[np.ndarray]:
-    segmentos = []
-    for i in range(0, len(array) - janela + 1, passo):
-        trecho = array[i:i+janela]
-        if trecho.shape[0] == janela:
-            segmentos.append(trecho)
-    return segmentos
-
-# Exemplo: articulação_l_w_1d tem shape (N,)
-# segmentos = segmentar_com_janela_sliding(articulação_l_w_1d, janela=50, passo=50)
-# print(f"Total de segmentos: {len(segmentos)}")
-# print(f"Shape de um segmento: {segmentos[0].shape}")
-
-# for i in range(15):
-#     plt.plot(segmentos[i])
-#     plt.title(f"Segmento {i}")
-#     plt.show()
+def canberra_distance(x, y):
+    return np.sum(np.abs(x - y) / (np.abs(x) + np.abs(y) + 1e-10))
 
 
-# KNN-DTW APLICAÇÃO
+# Compute DTW
+alignment_plot  = dtw(articulação_l_w_1d, articulação_r_w_1d, 
+                keep_internals=True,  # Keep matrices for visualization
+                distance_only=False,
+                dist_method=squared_euclidean_distance)
 
-dataset = DatasetKeypoints(Caminhos.dataset_csv)
-X_segmentado, y = [], []
+# Access results
+print("Distance: dtw lib: ", alignment_plot.distance)
+# Distance: 287.29683062447003
+print("Normalized distance: dtw lib: ", alignment_plot.normalizedDistance)
+# Normalized distance: 0.15462692713911197 / ~15.5% de diferença
 
-for path_csv, rotulo in zip(dataset.paths_csv, dataset.rotulos):
-    df = pd.read_csv(path_csv)
-    keypoints = converter_array32(df)
-    segmentos = segmentar_com_janela_sliding(keypoints, janela=62, passo=62)
-    X_segmentado.extend(segmentos)
-    y.extend([rotulo]*len(segmentos))
+# show 3
+# 1. mostra a o grafico das articulações de interesse em analise
+fig, ax1 = plt.subplots(figsize=(16, 10)) 
 
-# Separar treino/teste
-X_train, X_test, y_train, y_test = train_test_split(X_segmentado, y, stratify=y, test_size=0.3)
+ax1.plot(articulação_l_w_1d, label='video dataset', color='blue')
+ax1.plot(articulação_r_w_1d, label='video analise', linestyle='--', color='black')
 
-# Treinar e avaliaro dataset com modelo KNN com DTW
-modelo = KNN_DTW(k=5)
-modelo.fit(X_train, y_train)
-y_pred = modelo.predict(X_test)
+ax1.set_title('Original Time Series')
+ax1.legend()
+plt.xticks(np.arange(0, len(articulação_l_w_1d), 60),  rotation=45, ha="right")
+plt.show()
 
-print("\n📊 Relatório de Classificação:")
-print(classification_report(y_test, y_pred, target_names=dataset.nome_golpes_classe))
 
-# testando video curto
-golpe = pd.read_csv(Caminhos.teste_periodiciodade11)
-golpe_conver = converter_array32(golpe)
+# 2. 4 vnjm/g45-
+distance, paths = dtw2.warping_paths(articulação_l_w_1d, articulação_r_w_1d, use_c=False)
+best_path = dtw2.best_path(paths)
+similarity_score = distance / len(best_path)
 
-segmentos_teste = segmentar_com_janela_sliding(golpe_conver, janela=len(golpe_conver), passo=len(golpe_conver))
+print("distance - dtai lib analise: ",distance)
+# print(paths)
+# print(best_path)
+print("similarity_score - dtai lib analise:",similarity_score)
 
-if not segmentos_teste:
-    print("⚠️ O vídeo externo é muito curto ou a janela está maior que o número de frames.")
-else:
-    y_pred_externo = modelo.predict(segmentos_teste)
-    for i, pred in enumerate(y_pred_externo):
-        nome_classe = dataset.nome_golpes_classe[pred]
-        print(f"Predito como ➤  {nome_classe}")
+plt.figure(figsize=(12, 8))
+
+# Original Time Series Plot
+ax1 = plt.subplot2grid((2, 2), (0, 0))
+ax1.plot(articulação_l_w_1d, label='video dataset', color='green')
+ax1.plot(articulação_r_w_1d, label='video analise', linestyle='--',color='black')
+ax1.set_title('Original Time Series')
+ax1.legend()
+
+# Shortest Path Plot (Cost Matrix with the path)
+# In this example, only the path is plotted, not the entire cost matrix.
+
+ax2 = plt.subplot2grid((2, 2), (0, 1))
+ax2.plot(np.array(best_path)[:, 0], np.array(best_path)[:, 1], 'green', marker='o', linestyle='-')
+ax2.set_title('Shortest Path (Best Path)')
+ax2.set_xlabel('video dataset frames')
+ax2.set_ylabel('video analise frames')
+ax2.grid(True)
+
+# Point-to-Point Comparison Plot
+ax3 = plt.subplot2grid((2, 2), (1, 0), colspan=2)
+ax3.plot(articulação_l_w_1d, label='video dataset', color='green', marker='o')
+ax3.plot(articulação_r_w_1d, label='video analise', color='black', marker='x', linestyle='--')
+
+for a, b in best_path:
+    ax3.plot([a, b], [articulação_l_w_1d[a], articulação_r_w_1d[b]], color='grey', linestyle='-', linewidth=1, alpha = 0.5)
+ax3.set_title('Point-to-Point Comparison After DTW Alignment')
+ax3.legend()
+
+plt.tight_layout()
+plt.show()
+
+# Create a DataFrame to display the similarity score and correlation coefficient
+results_df = pd.DataFrame({
+    'Metric': ['DTW Similarity Score'],
+    'Value': [similarity_score]
+})
+
+# Add descriptions for the results
+results_df['Description'] = [
+    "Lower scores indicate greater similarity between the time series."
+]
+
+results_df
+
+print(results_df)
+
+
+
+"""

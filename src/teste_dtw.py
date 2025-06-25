@@ -53,9 +53,23 @@ articulação_r_w = np.array([ast_func(point) for point in df2["l_w"].values])
 articulação_l_w_1d = np.linalg.norm(articulação_l_w, axis=1) if articulação_l_w.ndim > 1 else articulação_l_w
 articulação_r_w_1d = np.linalg.norm(articulação_r_w, axis=1) if articulação_r_w.ndim > 1 else articulação_r_w
 
+def squared_euclidean_distance(x, y):
+    return np.sum((x - y) ** 2)
+
+def chebyshev_distance(x, y):
+    return np.max(np.abs(x - y))
+
 def manhattan_distance(x, y):
     return np.sum(np.abs(x - y))
 
+def euclidean_distance(x, y):
+    return np.sqrt(np.sum((x - y) ** 2))
+
+def cosine_distance(x, y):
+    return 1 - np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))
+
+def canberra_distance(x, y):
+    return np.sum(np.abs(x - y) / (np.abs(x) + np.abs(y) + 1e-10))
 
 # Compute DTW
 alignment_plot  = dtw(articulação_l_w_1d, articulação_r_w_1d, 
