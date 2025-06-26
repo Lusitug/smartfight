@@ -2,6 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 import ast
+from typing import List
+
 class Globais:        
     @staticmethod
     def nome_articulacoes():
@@ -56,3 +58,13 @@ class Globais:
     def converter_array32(df: pd.DataFrame) -> np.ndarray:
         vetores = df.apply(Globais.converter_frame_vetor, axis=1).values.tolist()
         return np.array(vetores, dtype=np.float32)
+    
+
+    @staticmethod
+    def segmentar_com_janela_sliding(array: np.ndarray, janela=35, passo=35) -> List[np.ndarray]:
+        segmentos = []
+        for i in range(0, len(array) - janela + 1, passo):
+            trecho = array[i:i+janela]
+            if trecho.shape[0] == janela:
+                segmentos.append(trecho)
+        return segmentos

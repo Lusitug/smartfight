@@ -17,13 +17,8 @@ from analise.analisar_periodos import AnalisarCiclosDataset
 from analise.dtw_analise import AnalisarSequenciasDTW
 from ml.classificacao_dtw_knn import ClassificadorDTW_KNN
 
-def segmentar_com_janela_sliding(array: np.ndarray, janela=5, passo=20) -> List[np.ndarray]:
-    segmentos = []
-    for i in range(0, len(array) - janela + 1, passo):
-        trecho = array[i:i+janela]
-        if trecho.shape[0] == janela:
-            segmentos.append(trecho)
-    return segmentos
+
+####################################
 
 # df = pd.read_csv(Caminhos.teste_periodiciodade7)
 # articulacao_l_w = np.array([ast_func(point) for point in df["l_w"].values])
@@ -38,12 +33,16 @@ def segmentar_com_janela_sliding(array: np.ndarray, janela=5, passo=20) -> List[
 # visu = VisualizarMovimentoArticulacao(golpe_csv=df)
 # visu.plotar_movimento01(["l_k"])
 
+######################################
+
 # # fft
 # # df = Globais.converter_array32(df)
 # analise = AnalisarCiclosDataset(golpe_csv=df)
 # feq =  analise.verificar_periodo(idx_ponto=9) # obtem valores dos ciclos
 # # obtendo frequencia
 # print(f" frequencia:  {feq['period_frames']:.2f} " )
+
+###################################
 
 # # comparaão dtw
 # df2 = pd.read_csv(Caminhos.teste_periodiciodade17)
@@ -59,6 +58,7 @@ def segmentar_com_janela_sliding(array: np.ndarray, janela=5, passo=20) -> List[
 # print(similaridad)
 # analise2.plotar_dtaidistance_lib(melhor_caminho=paths)
 
+####################################
 
 # classificação dtw-knn (testar outros ml)
 
@@ -84,10 +84,10 @@ print(dtw_knn_classfy.evualuate(x_test=x_test, y_test=y_test,y_pred=y_pred))
 # predição
 
 # 2. carregar vídeo externo
-golpe = pd.read_csv(Caminhos.teste_periodiciodade11)
+golpe = pd.read_csv(Caminhos.teste_periodiciodade20)
 golpe_conver = Globais.converter_array32(golpe)
 
-segmentos_teste = segmentar_com_janela_sliding(
+segmentos_teste = Globais.segmentar_com_janela_sliding(
     golpe_conver,
     janela=len(golpe_conver),
     passo=len(golpe_conver)

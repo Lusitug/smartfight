@@ -12,6 +12,8 @@ class Caminhos:
 
     path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
     
+
+    
     teste_periodiciodade11 = os.path.join("src", "direto_EyHSY2mj.csv") #curto direto rw
     teste_periodiciodade12 = os.path.join("src", "direto-seg_H3GhvS2O.csv") #curto direto lw
 
@@ -29,10 +31,14 @@ class Caminhos:
     teste_periodiciodade15 =  os.path.join("src", "direto4_cxPxW3KR.csv") #longo
 
     teste_periodiciodade16 =  os.path.join("src", "cotovelo-circular-direito.csv") #longo
+
+    teste_periodiciodade18 =  os.path.join("src", "cruzado-d_Hcz7pGmj.csv") #curto 
+    teste_periodiciodade19 =  os.path.join("src", "jab_jMplKElc.csv") #curto  
+    teste_periodiciodade20 =  os.path.join("src", "gancho-e_cWKREa8Z.csv") #curto
    
 
 
-
+    # 14 rk  18 rw 19 lw 20 lw
 
 
 

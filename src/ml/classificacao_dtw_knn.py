@@ -10,6 +10,7 @@ import numpy as np
 from typing import List
 from dtw import dtw
 from dtaidistance import dtw as dtai
+from analise.analisar_periodos import AnalisarCiclosDataset
 
 class ClassificadorDTW_KNN:
     def __init__(self, k: int = 5): # add cliclos para slidding
@@ -19,6 +20,7 @@ class ClassificadorDTW_KNN:
         self.indices_golpes_classe = {}
         self.x = []
         self.y = []
+        # self.get_frequencias = AnalisarCiclosDataset()
 
     def carregar_dataset(self):
         self.nomes_golpes_classe = sorted ([
