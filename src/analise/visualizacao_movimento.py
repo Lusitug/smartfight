@@ -10,8 +10,7 @@ class VisualizarMovimentoArticulacao:
     def __init__(self, golpe_csv: pd.DataFrame):
         self.df = golpe_csv
         
-    # nao converter df em float32, não ha computação comparativa ainda
-    # Visualiza o movimento de articulações específicas no plano cartesiano.
+    # eixo x e eixo y plotados em relação ao tempo/frames
     def plotar_movimento01(self, articulacoes: List[str], n_points=50):
         if isinstance(articulacoes, str):
             articulacoes = [articulacoes]

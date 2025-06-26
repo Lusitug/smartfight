@@ -10,7 +10,7 @@ class AnalisarCiclosDataset:
     def __init__(self, golpe_csv: np.ndarray):
         self.df = golpe_csv
         self.df = Globais.converter_array32(self.df)
-
+    # obtm os valores dos ciclos
     def verificar_periodo(self, idx_ponto: int= 0):
         idx_y = idx_ponto * 2
         y = self.df[:, idx_y]

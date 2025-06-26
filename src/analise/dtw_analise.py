@@ -10,7 +10,8 @@ from utils.distance_methods import DistancesDTW
 class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principais
     def __init__(self, series1: np.ndarray, series2: np.ndarray, articulacao: str):
         self.articulacao = articulacao  # Salva o nome da articulação
-        self.serie1 = self._preparar_articulação(series1, articulacao) 
+        # self.serie1 = self._preparar_articulação(series1, articulacao) 
+        self.serie1 = self._preparar_articulação(series1, "l_k") 
         self.serie2 = self._preparar_articulação(series2, articulacao)
 
         if self.serie1.ndim > 1:
@@ -41,8 +42,14 @@ class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principai
                          keep_internals=True,
                          distance_only=False,
                          dist_method=dist_methods)
+        path = list(zip(alinhamento.index1, alinhamento.index2))
 
-        return alinhamento  # alinhamento.distance, alinhamento.normalizedDistance,
+        return {
+            'alinhamento': alinhamento,
+            'distance': alinhamento.distance,
+            'normalized_distance': alinhamento.normalizedDistance,
+            'path': path
+        }  # alinhamento.distance, alinhamento.normalizedDistance,
 
     def calcular_distancia_dtaidistance_lib(self):
         distancia, paths = dtw2.warping_paths(self.serie1, self.serie2, use_c=False)
@@ -52,60 +59,55 @@ class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principai
         return distancia, valor_similaridade, melhor_caminho
     
     def plotar_dtw_lib(self, alinhamento):
-        plt.figure(figsize=(20, 8))
-        plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green')
-        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', linestyle='--', color='red')
+        plt.figure(figsize=(15, 10))
+        plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})',  color='green')
+        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', linestyle='-', color='grey')
         plt.title(f'Séries Temporais Originais - {self.articulacao}')
         plt.legend()
         plt.tight_layout()
         plt.show()
 
-        plt.figure(figsize=(20, 8))
-        path = list(zip(alinhamento.index1, alinhamento.index2))
-        plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green', marker='o')
-        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', color='red', marker='x', linestyle='--')
-        for i, j in path:
-            plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='white', alpha=0.1)
-        plt.title(f'Comparação Ponto-a-Ponto (lib dtw) - {self.articulacao}')
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+        # plt.figure(figsize=(15, 10))
+        # path = list(zip(alinhamento.index1, alinhamento.index2))
+        # plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green', marker='o' , linestyle=':')
+        # plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', color='grey', marker='x', linestyle='--')
+        # for i, j in path:
+        #     plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='white', alpha=0.1)
+        # plt.title(f'Comparação Ponto-a-Ponto (lib dtw) - {self.articulacao}')
+        # plt.legend()
+        # plt.tight_layout()
+        # plt.show()
 
-        return {
-            'distance': alinhamento.distance,
-            'normalized_distance': alinhamento.normalizedDistance,
-            'path': path
-        }
 
     def plotar_dtaidistance_lib(self, melhor_caminho):
-        plt.figure(figsize=(20, 8))
+        plt.figure(figsize=(15, 10))
         plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green')
-        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', linestyle='--', color='black')
+        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', linestyle='-', color='grey')
         plt.title(f'Séries Temporais Originais - {self.articulacao}')
         plt.legend()
         plt.tight_layout()
         plt.show()
 
-        plt.figure(figsize=(20, 8))
+        plt.figure(figsize=(15, 10))
         caminho = np.array(melhor_caminho)
         plt.plot(caminho[:, 0], caminho[:, 1], 'green', marker='o', linestyle='-')
         n = len(self.serie1)
         m = len(self.serie2)
         plt.plot([0, n-1], [0, m-1], 'r--', label='Diagonal (referência)')
-        plt.title(f'Caminho de Alinhamento (Best Path) - {self.articulacao}')
+        plt.title(f'Melhor Caminho- {self.articulacao}')
         plt.xlabel('Índice Série 1')
         plt.ylabel('Índice Série 2')
         plt.legend()
         plt.tight_layout()
         plt.show()
 
-        plt.figure(figsize=(20, 8))
-        plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green', marker='o')
-        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', color='black', marker='x', linestyle='--')
-        for i, j in melhor_caminho:
-            plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='white', alpha=0.4)
-        plt.title(f'Comparação Ponto-a-Ponto (lib dtaidistance) - {self.articulacao}')
+        # plt.figure(figsize=(15, 10))
+        # plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green', marker='o'  , linestyle=':')
+        # plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', color='grey', marker='x', linestyle='--')
+        # for i, j in melhor_caminho:
+        #     plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='white', alpha=0.1)
+        # plt.title(f'Comparação Ponto-a-Ponto (lib dtaidistance) - {self.articulacao}')
 
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+        # plt.legend()
+        # plt.tight_layout()
+        # plt.show()

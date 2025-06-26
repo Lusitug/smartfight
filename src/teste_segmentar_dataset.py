@@ -71,8 +71,8 @@ class KNN_DTW:
                          for amostra_treino in self.X_train]
             
 
-            distancias = [dtw(amostra, amostra_treino, distance_only=True).distance
-                          for amostra_treino in self.X_train]
+            # distancias = [dtw(amostra, amostra_treino, distance_only=True).distance
+            #               for amostra_treino in self.X_train]
             indices = np.argsort(distancia)[:self.k]
             votos = [self.y_train[i] for i in indices]
             classe_comum = max(set(votos), key=votos.count)

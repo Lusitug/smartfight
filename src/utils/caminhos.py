@@ -12,20 +12,26 @@ class Caminhos:
 
     path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
     
-    teste_periodiciodade11 = os.path.join("src", "direto_EyHSY2mj.csv") #curto
-    teste_periodiciodade12 = os.path.join("src", "direto-seg_H3GhvS2O.csv") #curto
+    teste_periodiciodade11 = os.path.join("src", "direto_EyHSY2mj.csv") #curto direto rw
+    teste_periodiciodade12 = os.path.join("src", "direto-seg_H3GhvS2O.csv") #curto direto lw
 
     teste_periodiciodade7 = os.path.join("src", "direto-seg1_acL4ciwa.csv") #longo
-    teste_periodiciodade8 = os.path.join("src", "dataset", "Direto", "direto-seg1_acL4ciwa.mov")
+    teste_periodiciodade8 = os.path.join("src", "dataset", "Direto", "direto-seg1_acL4ciwa.mov") # so pra nao quebrar anima_keypoints.py
     
-    teste_periodiciodade9 = os.path.join("src", "c.csv")#curt
+    teste_periodiciodade9 = os.path.join("src", "c.csv")# curt  chute alto de esquerda
     teste_periodiciodade10 = os.path.join("src", "CC.csv") #longo
     
 
-    teste_periodiciodade13 =  os.path.join("src", "joelho-direito1_XN53OaK9.csv") #curtlongo
-    teste_periodiciodade14 =  os.path.join("src", "joelho.csv") #curt
+    teste_periodiciodade13 =  os.path.join("src", "joelho-direito1_XN53OaK9.csv") #longo lk
+    teste_periodiciodade17 =  os.path.join("src", "joelho-direito.csv") #longo rk
+    teste_periodiciodade14 =  os.path.join("src", "joelho.csv") #curt   rk joelho direito
 
     teste_periodiciodade15 =  os.path.join("src", "direto4_cxPxW3KR.csv") #longo
+
+    teste_periodiciodade16 =  os.path.join("src", "cotovelo-circular-direito.csv") #longo
+   
+
+
 
 
 
