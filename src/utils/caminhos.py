@@ -10,9 +10,12 @@ class Caminhos:
     path_videos2estimate = os.path.join("src", "dataset")
     dataset_csv = os.path.join("src", "DATASET_CSV")
 
+    dataset_loop_csv = os.path.join("src", "DATASET_LOOP_CSV")
+
     path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
     
 
+    # corrigir caminhos dos testes de peridiocidade, acrescentar "csvs_testes entre src e <nome_arquivo>"
     
     teste_periodiciodade11 = os.path.join("src", "direto_EyHSY2mj.csv") #curto direto rw
     teste_periodiciodade12 = os.path.join("src", "direto-seg_H3GhvS2O.csv") #curto direto lw
@@ -35,15 +38,18 @@ class Caminhos:
     teste_periodiciodade18 =  os.path.join("src", "cruzado-d_Hcz7pGmj.csv") #curto 
     teste_periodiciodade19 =  os.path.join("src", "jab_jMplKElc.csv") #curto  
     teste_periodiciodade20 =  os.path.join("src", "gancho-e_cWKREa8Z.csv") #curto
-   
-
-
     # 14 rk  18 rw 19 lw 20 lw
 
+    # teste peridiocidade com loop
+
+    teste_periodiciodade_loop1 = os.path.join("src", "arqs_testes", "csvs_testes", "chute-frontal-direito-destro_loop.csv") #curto para loop
+
+    teste_periodiciodade_loop2 = os.path.join("src", "arqs_testes", "csvs_testes", "chute-frontal-esquerdo-canhoto_loop.csv") #curto para loop
+
+    teste_periodiciodade_loop3 = os.path.join("src", "arqs_testes", "csvs_testes", "chute-frontal-esquerdo-canhoto-normal.csv") #curto para loop
 
 
-
-
+    # teste definir posição de guarda
 
     dataset_guarda = os.path.join("src", "data_guarda")
     saida_csv_guarda = os.path.join("src", "saidas", "definicao_guarda")

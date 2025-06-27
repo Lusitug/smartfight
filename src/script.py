@@ -28,80 +28,74 @@ from ml.classificacao_dtw_knn import ClassificadorDTW_KNN
 # articulacao = np.array([Globais.ast_func(point) for point in df["l_w"].values])
 # articulacao_1d = np.linalg.norm(articulacao, axis=1) if articulacao.ndim > 1 else articulacao
 
-# visualização
-# df = pd.read_csv(Caminhos.teste_periodiciodade13) #eixo x e eixo y em relação ao tempo/franes
-# visu = VisualizarMovimentoArticulacao(golpe_csv=df)
-# visu.plotar_movimento01(["l_k"])
+####################################
+
+df = pd.read_csv(Caminhos.teste_periodiciodade_loop2) # direto lk
+df2 = pd.read_csv(Caminhos.teste_periodiciodade_loop3)
+
+
+# visualização # eixo x e eixo y em relação ao tempo/franes
+
+visu = VisualizarMovimentoArticulacao(golpe_csv=df)
+visu.plotar_movimento01(["l_a"])
 
 ######################################
 
 # # fft
 # # df = Globais.converter_array32(df)
-# analise = AnalisarCiclosDataset(golpe_csv=df)
-# feq =  analise.verificar_periodo(idx_ponto=9) # obtem valores dos ciclos
-# # obtendo frequencia
-# print(f" frequencia:  {feq['period_frames']:.2f} " )
+analise = AnalisarCiclosDataset(golpe_csv=df)
+feq =  analise.verificar_periodo(idx_ponto=9) # obtem valores dos ciclos
+print(f" frequencia:  {feq['period_frames']:.2f} " )
 
-###################################
+analise1 = AnalisarCiclosDataset(golpe_csv=df2)
+feq2 =  analise1.verificar_periodo(idx_ponto=9) # obtem valores dos ciclos
+print(f" frequencia:  {feq2['period_frames']:.2f} " )
+# print(feq)
 
-# # comparaão dtw
-# df2 = pd.read_csv(Caminhos.teste_periodiciodade17)
-# analise2 = AnalisarSequenciasDTW(series1=df, series2=df2, articulacao="r_k") 
+# ###################################
 
-# distance_plot = analise2.calcular_distancia_dtw_lib(tipo_distancia="squared_euclidean_distance") # manhattan_distance
-# print(distance_plot["distance"])
-# print(distance_plot["normalized_distance"])
-# analise2.plotar_dtw_lib(alinhamento=distance_plot["alinhamento"])
+# comparaão dtw
+analise2 = AnalisarSequenciasDTW(series1=df, series2=df2, articulacao="l_a") 
+
+distance_plot = analise2.calcular_distancia_dtw_lib(tipo_distancia="squared_euclidean_distance") # manhattan_distance
+print("Distancia (DTW): ", distance_plot["distance"])
+print("Distancia Normalizada (DTW): ", distance_plot["normalized_distance"])
+analise2.plotar_dtw_lib(alinhamento=distance_plot["alinhamento"])
 
 # distance_plot2, similaridad, paths = analise2.calcular_distancia_dtaidistance_lib()
 # print(distance_plot2)
 # print(similaridad)
 # analise2.plotar_dtaidistance_lib(melhor_caminho=paths)
 
-####################################
 
-# classificação dtw-knn (testar outros ml)
+###
 
-dtw_knn_classfy = ClassificadorDTW_KNN()
-dtw_knn_classfy.carregar_dataset()
-# dtw_knn_classfy.fit()
+def calcular_similaridade(alinhamento, period_frames1, period_frames2, tolerancia_freq=0.05):
+    sim_dtw = 1 - min(alinhamento.normalizedDistance, 1)
+    freq1 = 1 / period_frames1
+    freq2 = 1 / period_frames2
 
-x_train, x_test, y_train, y_test = dtw_knn_classfy.train_test()
-dtw_knn_classfy.fit(x_train, y_train)
-# print("x_train", type(x_train), len(x_train))
-# print("y_train",  type(y_train), len(y_train))
-# print("x_test", type(x_test), len(x_test))
-# print("y_test", type(y_test) , len(y_test))
+    freq_match = 1 if abs(freq1 - freq2) <= tolerancia_freq else 0
 
-print("[DEBUG] x_train[0] type:", type(x_train[0]), "shape:", getattr(x_train[0], "shape", "sem shape"))
-print("[DEBUG] x_test[0] type:", type(x_test[0]), "shape:", getattr(x_test[0], "shape", "sem shape"))
+    score = sim_dtw * 0.8 + freq_match * 0.2
 
-# avaliação
+    print(f"Similaridade DTW normalizada: {sim_dtw:.3f}")
+    print(f"Frequência Vídeo 1: {freq1:.3f}, Vídeo 2: {freq2:.3f}, match: {freq_match}")
+    print(f"Score combinado: {score:.3f}")
 
-y_pred = dtw_knn_classfy.predict(x_train=x_train, y_train=y_train, x_test=x_test)
-print(dtw_knn_classfy.evualuate(x_test=x_test, y_test=y_test,y_pred=y_pred))
+    return score
+def interpretar_similaridade(score):
+    if score >= 1.0:
+        return "Movimentos idênticos (ou extremamente semelhantes)"
+    elif score >= 0.8:
+        return "Movimentos muito semelhantes, com variações pequenas"
+    elif score >= 0.5:
+        return "Similaridade média, com alguns padrões parecidos"
+    elif score >= 0.2:
+        return "Baixa similaridade"
+    else:
+        return "Movimentos bem diferentes"
 
-# predição
-
-# 2. carregar vídeo externo
-golpe = pd.read_csv(Caminhos.teste_periodiciodade20)
-golpe_conver = Globais.converter_array32(golpe)
-
-segmentos_teste = Globais.segmentar_com_janela_sliding(
-    golpe_conver,
-    janela=len(golpe_conver),
-    passo=len(golpe_conver)
-)
-
-# 3. Predição
-if not segmentos_teste:
-    print("⚠️ O vídeo externo é muito curto ou a janela está maior que o número de frames.")
-else:
-    y_pred_externo = dtw_knn_classfy.predict(
-        x_train=dtw_knn_classfy.x_train,
-        y_train=dtw_knn_classfy.y_train,
-        x_test=segmentos_teste
-    )
-    for i, pred in enumerate(y_pred_externo):
-        nome_classe = dtw_knn_classfy.nomes_golpes_classe[pred]
-        print(f"Segmento {i+1} predito como ➤  {nome_classe}")
+score = calcular_similaridade(distance_plot['alinhamento'], feq['period_frames'], feq2['period_frames'])
+descricao = interpretar_similaridade(score)
+print(f"Similaridade final: {score:.3f} → {descricao}")

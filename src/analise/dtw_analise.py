@@ -10,9 +10,11 @@ from utils.distance_methods import DistancesDTW
 class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principais
     def __init__(self, series1: np.ndarray, series2: np.ndarray, articulacao: str):
         self.articulacao = articulacao  # Salva o nome da articulação
-        # self.serie1 = self._preparar_articulação(series1, articulacao) 
-        self.serie1 = self._preparar_articulação(series1, "l_k") 
+        self.serie1 = self._preparar_articulação(series1, articulacao) 
+        # self.serie1 = self._preparar_articulação(series1, "r_w")
+         
         self.serie2 = self._preparar_articulação(series2, articulacao)
+        # self.serie2 = self._preparar_articulação(series2, "r_w")
 
         if self.serie1.ndim > 1:
             self.serie1 = np.linalg.norm(self.serie1, axis=1)
@@ -58,56 +60,81 @@ class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principai
 
         return distancia, valor_similaridade, melhor_caminho
     
+
     def plotar_dtw_lib(self, alinhamento):
-        plt.figure(figsize=(15, 10))
-        plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})',  color='green')
-        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', linestyle='-', color='grey')
-        plt.title(f'Séries Temporais Originais - {self.articulacao}')
+        fig, axs = plt.subplots(nrows=2, figsize=(15, 6), sharex=True)
+        axs[0].plot(self.serie1, color='blue')
+        axs[0].set_title(f'Vídeo 1: ({self.articulacao})')
+        axs[0].grid(True)
+        axs[1].plot(self.serie2, color='black')
+        axs[1].set_title(f'Vídeo 2: ({self.articulacao})')
+        axs[1].grid(True)
+
+        fig.suptitle(f'Séries Temporais Originais - ARTICULAÇÃO: {self.articulacao}', fontsize=14)
+        plt.tight_layout(rect=[0, 0, 1, 0.95])  # espaço para o suptitle
+        plt.show()
+
+        plt.figure(figsize=(15, 6))
+        path = list(zip(alinhamento.index1, alinhamento.index2))
+        plt.plot(self.serie1, label='Vídeo 1', color='blue', marker='o', linestyle=':')
+        plt.plot(self.serie2, label='Vídeo 2', color='black', marker='x', linestyle='--')
+        for i, j in path:
+            plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='grey', alpha=0.4)
+        plt.title(f'Ponto-a-Ponto (lib dtw) - ARTICULAÇÃO: {self.articulacao}')
         plt.legend()
         plt.tight_layout()
         plt.show()
 
-        # plt.figure(figsize=(15, 10))
-        # path = list(zip(alinhamento.index1, alinhamento.index2))
-        # plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green', marker='o' , linestyle=':')
-        # plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', color='grey', marker='x', linestyle='--')
-        # for i, j in path:
-        #     plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='white', alpha=0.1)
-        # plt.title(f'Comparação Ponto-a-Ponto (lib dtw) - {self.articulacao}')
-        # plt.legend()
-        # plt.tight_layout()
-        # plt.show()
+        plt.figure(figsize=(8, 8))
+        i_vals, j_vals = zip(*path)
+        n = len(self.serie1)
+        m = len(self.serie2)
+        plt.plot(i_vals, j_vals, color='green')
+        plt.plot([0, n-1], [0, m-1], 'r--', label='Diagonal (referência)')
+        plt.xlabel("Frames Vídeo 1")
+        plt.ylabel("Frames Vídeo 2")
+        plt.title(f'MELHOR CAMINHO - ARTICULAÇÃO: ({self.articulacao})')
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
-
+        
     def plotar_dtaidistance_lib(self, melhor_caminho):
+        fig, axs = plt.subplots(nrows=2, figsize=(15, 6), sharex=True)
+        axs[0].plot(self.serie1, color='blue')
+        axs[0].set_title('Vídeo 1')
+        axs[0].grid(True)
+        axs[1].plot(self.serie2, color='black')
+        axs[1].set_title('Vídeo 2')
+        axs[1].grid(True)
+
+        fig.suptitle(f'Séries Temporais Originais - ARTICULAÇÃO: {self.articulacao}', fontsize=14)
+        plt.tight_layout(rect=[0, 0, 1, 0.95])  # espaço para o suptitle
+        plt.show()
+
+
         plt.figure(figsize=(15, 10))
-        plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green')
-        plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', linestyle='-', color='grey')
-        plt.title(f'Séries Temporais Originais - {self.articulacao}')
+        plt.plot(self.serie1, label='Vídeo 1', color='blue', marker='o'  , linestyle=':')
+        plt.plot(self.serie2, label='Vídeo 2', color='black', marker='x', linestyle='--')
+        for i, j in melhor_caminho:
+            plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='grey', alpha=0.4)
+        plt.title(f'Ponto-a-Ponto (lib dtaidistance) - ARTICULAÇÃO: {self.articulacao}')
+
         plt.legend()
         plt.tight_layout()
         plt.show()
+
 
         plt.figure(figsize=(15, 10))
         caminho = np.array(melhor_caminho)
-        plt.plot(caminho[:, 0], caminho[:, 1], 'green', marker='o', linestyle='-')
+        plt.plot(caminho[:, 0], caminho[:, 1], 'green')
         n = len(self.serie1)
         m = len(self.serie2)
         plt.plot([0, n-1], [0, m-1], 'r--', label='Diagonal (referência)')
-        plt.title(f'Melhor Caminho- {self.articulacao}')
-        plt.xlabel('Índice Série 1')
-        plt.ylabel('Índice Série 2')
+        plt.title(f'MELHOR CAMINHO - ARTICULAÇÃO: ({self.articulacao})')
+        plt.xlabel('Frames Vídeo 1')
+        plt.ylabel('Frames Vídeo 2')
         plt.legend()
         plt.tight_layout()
         plt.show()
-
-        # plt.figure(figsize=(15, 10))
-        # plt.plot(self.serie1, label=f'Série 1 ({self.articulacao})', color='green', marker='o'  , linestyle=':')
-        # plt.plot(self.serie2, label=f'Série 2 ({self.articulacao})', color='grey', marker='x', linestyle='--')
-        # for i, j in melhor_caminho:
-        #     plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='white', alpha=0.1)
-        # plt.title(f'Comparação Ponto-a-Ponto (lib dtaidistance) - {self.articulacao}')
-
-        # plt.legend()
-        # plt.tight_layout()
-        # plt.show()

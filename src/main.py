@@ -30,44 +30,66 @@ if __name__ == "__main__":
     # guarda.plotar_modelo()
 
     
-    extrator = ExtracaoKeypoints( dataset_path= Caminhos.path_videos2estimate,
-                                 modelo_yolo_path=Caminhos.path_yolo,
-                                 saida_csv_path=Caminhos.path_keypoints2csv)
+    # extrator = ExtracaoKeypoints( dataset_path= Caminhos.path_videos2estimate,
+    #                              modelo_yolo_path=Caminhos.path_yolo,
+    #                              saida_csv_path=Caminhos.path_keypoints2csv)
     
-    extrator.extrair_keypoints_dataset()
+    # extrator.extrair_keypoints_dataset()
 
 
 
-    # augumentador = DataAugumentation()
+    augumentador = DataAugumentation()
 
-    # augumentador.aplicar_augumentation_dataset()
+    augumentador.aplicar_augumentation_dataset()
     
-    # treinador = TreinadorLSTM(neuronios_ocultos=128,
-    #                         num_epocas=70, 
-    #                         batch_size=3,
-    #                         bidirecional=True,
-    #                         num_camadas=3)
-    
-    # treinador.treinar_modelo(plotar_grafico_perdas=True)
 
+####################################
 
-    ## teste inferencia
+    # ( TESTES PAUSADOS ) #       # ( TESTES PAUSADOS ) #        # ( TESTES PAUSADOS ) #       # ( TESTES PAUSADOS ) #       # ( TESTES PAUSADOS ) #
 
+# classificação dtw-knn (testar outros ml)
 
-    # extrair_kps = ExtracaoKeypoints(modelo_yolo_path=Caminhos.path_yolo, 
-    #                                 dataset_path="",
-    #                                 saida_csv_path="")
-    
-    # keypoints = extrair_kps.processar_video(Caminhos.path_teste1)
-    # salvar_csv = ConverterKeypointsCSV()
+# dtw_knn_classfy = ClassificadorDTW_KNN()
+# dtw_knn_classfy.carregar_dataset()
+# # dtw_knn_classfy.fit()
 
-    # salvar_csv.keypoints2csv(path_saida=os.path.join(Caminhos.path_teste0, "soco.csv"),
-    #                          lista_keypoints_video=keypoints)
-    
-    # inferencia = InferenciaLSTM(bidirecional=True, num_camadas=3)
-    
-    # saida = inferencia.prever(path_csv=Caminhos.path_teste2)
-    # print(saida)
+# x_train, x_test, y_train, y_test = dtw_knn_classfy.train_test()
+# dtw_knn_classfy.fit(x_train, y_train)
+
+# # print("x_train", type(x_train), len(x_train)) # print("y_train",  type(y_train), len(y_train)) # print("x_test", type(x_test), len(x_test)) # print("y_test", type(y_test) , len(y_test))
+
+# print("[DEBUG] x_train[0] type:", type(x_train[0]), "shape:", getattr(x_train[0], "shape", "sem shape"))
+# print("[DEBUG] x_test[0] type:", type(x_test[0]), "shape:", getattr(x_test[0], "shape", "sem shape"))
+
+# # avaliação
+
+# y_pred = dtw_knn_classfy.predict(x_train=x_train, y_train=y_train, x_test=x_test)
+# print(dtw_knn_classfy.evualuate(x_test=x_test, y_test=y_test,y_pred=y_pred))
+
+# # predição
+
+# # 2. carregar vídeo externo
+# golpe = pd.read_csv(Caminhos.teste_periodiciodade11)
+# golpe_conver = Globais.converter_array32(golpe)
+
+# segmentos_teste = Globais.segmentar_com_janela_sliding(
+#     golpe_conver,
+#     janela=len(golpe_conver),
+#     passo=len(golpe_conver)
+# )
+
+# # 3. Predição
+# if not segmentos_teste:
+#     print("⚠️ O vídeo externo é muito curto ou a janela está maior que o número de frames.")
+# else:
+#     y_pred_externo = dtw_knn_classfy.predict(
+#         x_train=dtw_knn_classfy.x_train,
+#         y_train=dtw_knn_classfy.y_train,
+#         x_test=segmentos_teste
+#     )
+#     for i, pred in enumerate(y_pred_externo):
+#         nome_classe = dtw_knn_classfy.nomes_golpes_classe[pred]
+#         print(f"Predito como : {nome_classe}")
 
     # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
     
