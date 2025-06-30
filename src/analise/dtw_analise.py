@@ -44,6 +44,7 @@ class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principai
                          keep_internals=True,
                          distance_only=False,
                          dist_method=dist_methods)
+        
         path = list(zip(alinhamento.index1, alinhamento.index2))
 
         return {
@@ -52,14 +53,6 @@ class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principai
             'normalized_distance': alinhamento.normalizedDistance,
             'path': path
         }  # alinhamento.distance, alinhamento.normalizedDistance,
-
-    def calcular_distancia_dtaidistance_lib(self):
-        distancia, paths = dtw2.warping_paths(self.serie1, self.serie2, use_c=False)
-        melhor_caminho = dtw2.best_path(paths)
-        valor_similaridade = distancia / len(melhor_caminho)     
-
-        return distancia, valor_similaridade, melhor_caminho
-    
 
     def plotar_dtw_lib(self, alinhamento):
         fig, axs = plt.subplots(nrows=2, figsize=(15, 6), sharex=True)
@@ -98,43 +91,92 @@ class AnalisarSequenciasDTW: # reorganizar saidas(returns) dos metodos principai
         plt.grid(True)
         plt.tight_layout()
         plt.show()
+    
+    def calcular_erro_medio_p2p(self, path_alinhamento) -> float:
+        # path = list(zip(alinhamento.index1, alinhamento.index2))
+        erros = []
 
+        for i, j in path_alinhamento:
+            if i < len(self.serie1) and j < len(self.serie2):
+                v1 = self.serie1[i]
+                v2 = self.serie2[j]
+                erro = abs(v1 - v2)
+                print(erro)
+                erro2 = abs(v1 - v1) ** 2
+                print(erro2)
+                erros.append(erro)
+        erro_medio = np.mean(erros)
+       
+        return erro_medio
+
+    def calcular_distancias_p2p(self, path_alinhamento):
+        distancias = [abs(self.serie1[i] - self.serie2[j]) for i,j in path_alinhamento]
         
-    def plotar_dtaidistance_lib(self, melhor_caminho):
-        fig, axs = plt.subplots(nrows=2, figsize=(15, 6), sharex=True)
-        axs[0].plot(self.serie1, color='blue')
-        axs[0].set_title('Vídeo 1')
-        axs[0].grid(True)
-        axs[1].plot(self.serie2, color='black')
-        axs[1].set_title('Vídeo 2')
-        axs[1].grid(True)
-
-        fig.suptitle(f'Séries Temporais Originais - ARTICULAÇÃO: {self.articulacao}', fontsize=14)
-        plt.tight_layout(rect=[0, 0, 1, 0.95])  # espaço para o suptitle
-        plt.show()
-
-
-        plt.figure(figsize=(15, 10))
-        plt.plot(self.serie1, label='Vídeo 1', color='blue', marker='o'  , linestyle=':')
-        plt.plot(self.serie2, label='Vídeo 2', color='black', marker='x', linestyle='--')
-        for i, j in melhor_caminho:
-            plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='grey', alpha=0.4)
-        plt.title(f'Ponto-a-Ponto (lib dtaidistance) - ARTICULAÇÃO: {self.articulacao}')
-
+        return {
+            "distancias": distancias,
+            "media": np.mean(distancias),
+            "desvio": np.std(distancias),
+            "max": np.max(distancias),
+            "min": np.min(distancias)
+        }
+    
+    def plotar_distancias_ponto_a_ponto(self, distancias, alinhamento):
+        x_vals = range(len(distancias))
+        plt.figure(figsize=(15, 5))
+        plt.plot(x_vals, distancias, label='Erro ponto-a-ponto', color='purple')
+        plt.axhline(np.mean(distancias), color='green', linestyle='--', label='Média')
+        plt.title(f'Erro ponto-a-ponto (DTW) - ARTICULAÇÃO: {self.articulacao}')
+        plt.xlabel("Par Alinhado (i,j)")
+        plt.ylabel("Distância |v1 - v2|")
+        plt.grid(True)
         plt.legend()
         plt.tight_layout()
         plt.show()
+""" 
+    # def calcular_distancia_dtaidistance_lib(self):
+    #     distancia, paths = dtw2.warping_paths(self.serie1, self.serie2, use_c=False)
+    #     melhor_caminho = dtw2.best_path(paths)
+    #     valor_similaridade = distancia / len(melhor_caminho)     
+
+    #     return distancia, valor_similaridade, melhor_caminho
 
 
-        plt.figure(figsize=(15, 10))
-        caminho = np.array(melhor_caminho)
-        plt.plot(caminho[:, 0], caminho[:, 1], 'green')
-        n = len(self.serie1)
-        m = len(self.serie2)
-        plt.plot([0, n-1], [0, m-1], 'r--', label='Diagonal (referência)')
-        plt.title(f'MELHOR CAMINHO - ARTICULAÇÃO: ({self.articulacao})')
-        plt.xlabel('Frames Vídeo 1')
-        plt.ylabel('Frames Vídeo 2')
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+    # def plotar_dtaidistance_lib(self, melhor_caminho):
+    #     fig, axs = plt.subplots(nrows=2, figsize=(15, 6), sharex=True)
+    #     axs[0].plot(self.serie1, color='blue')
+    #     axs[0].set_title('Vídeo 1')
+    #     axs[0].grid(True)
+    #     axs[1].plot(self.serie2, color='black')
+    #     axs[1].set_title('Vídeo 2')
+    #     axs[1].grid(True)
+
+    #     fig.suptitle(f'Séries Temporais Originais - ARTICULAÇÃO: {self.articulacao}', fontsize=14)
+    #     plt.tight_layout(rect=[0, 0, 1, 0.95])  # espaço para o suptitle
+    #     plt.show()
+
+
+    #     plt.figure(figsize=(15, 10))
+    #     plt.plot(self.serie1, label='Vídeo 1', color='blue', marker='o'  , linestyle=':')
+    #     plt.plot(self.serie2, label='Vídeo 2', color='black', marker='x', linestyle='--')
+    #     for i, j in melhor_caminho:
+    #         plt.plot([i, j], [self.serie1[i], self.serie2[j]], color='grey', alpha=0.4)
+    #     plt.title(f'Ponto-a-Ponto (lib dtaidistance) - ARTICULAÇÃO: {self.articulacao}')
+
+    #     plt.legend()
+    #     plt.tight_layout()
+    #     plt.show()
+
+
+    #     plt.figure(figsize=(15, 10))
+    #     caminho = np.array(melhor_caminho)
+    #     plt.plot(caminho[:, 0], caminho[:, 1], 'green')
+    #     n = len(self.serie1)
+    #     m = len(self.serie2)
+    #     plt.plot([0, n-1], [0, m-1], 'r--', label='Diagonal (referência)')
+    #     plt.title(f'MELHOR CAMINHO - ARTICULAÇÃO: ({self.articulacao})')
+    #     plt.xlabel('Frames Vídeo 1')
+    #     plt.ylabel('Frames Vídeo 2')
+    #     plt.legend()
+    #     plt.tight_layout()
+    #     plt.show()
+"""

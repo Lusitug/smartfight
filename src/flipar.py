@@ -2,7 +2,7 @@ import cv2
 from utils.caminhos import Caminhos
 
 # Carrega o vídeo
-video_path = Caminhos.teste_periodiciodade_loop1
+video_path = "src\joelho-esquerdo-destro.mp4"
 cap = cv2.VideoCapture(video_path)
 
 # Verifica se o vídeo foi aberto corretamente

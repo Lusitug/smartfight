@@ -8,45 +8,28 @@ class Caminhos:
     path_keypoints2csv =  os.path.join("src", "saidas", "keypoints_extraidos")
 
     path_videos2estimate = os.path.join("src", "dataset")
+
+    dataset_padrao = os.path.join("src", "DATASET_PADRAO")
     dataset_csv = os.path.join("src", "DATASET_CSV")
 
+    dataset_loop = os.path.join("src", "DATASET_LOOP")
     dataset_loop_csv = os.path.join("src", "DATASET_LOOP_CSV")
 
     path_modelo_treinado = os.path.join("src", "saidas", "modelos_ml")
     
-
-    # corrigir caminhos dos testes de peridiocidade, acrescentar "csvs_testes entre src e <nome_arquivo>"
-    
-    teste_periodiciodade11 = os.path.join("src", "direto_EyHSY2mj.csv") #curto direto rw
-    teste_periodiciodade12 = os.path.join("src", "direto-seg_H3GhvS2O.csv") #curto direto lw
-
-    teste_periodiciodade7 = os.path.join("src", "direto-seg1_acL4ciwa.csv") #longo
-    teste_periodiciodade8 = os.path.join("src", "dataset", "Direto", "direto-seg1_acL4ciwa.mov") # so pra nao quebrar anima_keypoints.py
-    
-    teste_periodiciodade9 = os.path.join("src", "c.csv")# curt  chute alto de esquerda
-    teste_periodiciodade10 = os.path.join("src", "CC.csv") #longo
+    videokk=  os.path.join("src", "arqs_testes", "videos_testes", "chute-alto-direito-canhoto.mp4")
     
 
-    teste_periodiciodade13 =  os.path.join("src", "joelho-direito1_XN53OaK9.csv") #longo lk
-    teste_periodiciodade17 =  os.path.join("src", "joelho-direito.csv") #longo rk
-    teste_periodiciodade14 =  os.path.join("src", "joelho.csv") #curt   rk joelho direito
+    # com loop
+    teste_peridiocidade_cloop = os.path.join("src", "jab-canhoto_loop.csv")
+    teste_peridiocidade_cloop1 = os.path.join("src", "jab-destro_loop.csv")
 
-    teste_periodiciodade15 =  os.path.join("src", "direto4_cxPxW3KR.csv") #longo
+    # sem loop
+    teste_peridiocidade_sloop = os.path.join("src", "jab1_qXkWWJe2.csv")
 
-    teste_periodiciodade16 =  os.path.join("src", "cotovelo-circular-direito.csv") #longo
 
-    teste_periodiciodade18 =  os.path.join("src", "cruzado-d_Hcz7pGmj.csv") #curto 
-    teste_periodiciodade19 =  os.path.join("src", "jab_jMplKElc.csv") #curto  
-    teste_periodiciodade20 =  os.path.join("src", "gancho-e_cWKREa8Z.csv") #curto
-    # 14 rk  18 rw 19 lw 20 lw
 
-    # teste peridiocidade com loop
 
-    teste_periodiciodade_loop1 = os.path.join("src", "arqs_testes", "csvs_testes", "chute-frontal-direito-destro_loop.csv") #curto para loop
-
-    teste_periodiciodade_loop2 = os.path.join("src", "arqs_testes", "csvs_testes", "chute-frontal-esquerdo-canhoto_loop.csv") #curto para loop
-
-    teste_periodiciodade_loop3 = os.path.join("src", "arqs_testes", "csvs_testes", "chute-frontal-esquerdo-canhoto-normal.csv") #curto para loop
 
 
     # teste definir posição de guarda

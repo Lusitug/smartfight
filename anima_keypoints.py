@@ -7,8 +7,8 @@ from src.utils.caminhos import Caminhos
 # from src.ml.preparar_entrada.validacao_vals import Validacao
 import cv2
 
-path_csv =  os.path.join(Caminhos.teste_periodiciodade20)
-video_path =  os.path.join(Caminhos.teste_periodiciodade8)
+path_csv =  os.path.join(Caminhos.teste_peridiocidade_cloop1)
+video_path =  os.path.join(Caminhos.videokk)
 
 df = pd.read_csv(path_csv)
 df.columns = df.columns.str.strip() # remove caracteres indesejados
