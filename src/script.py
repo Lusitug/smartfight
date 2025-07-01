@@ -1,3 +1,4 @@
+import glob
 from re import X
 from utils.globais import Globais
 from utils.caminhos import Caminhos
@@ -47,12 +48,12 @@ visu.plotar_movimento01(["l_w"])
 # # fft
 # # df = Globais.converter_array32(df)
 analise = AnalisarCiclosDataset(golpe_csv=df)
-feq =  analise.verificar_periodo2(idx_ponto=9) # obtem valores dos ciclos
+feq =  analise.verificar_periodo(idx_ponto=9) # obtem valores dos ciclos
 print(f" frequencia dom:  {feq['dominant_frequency']} " )
 print(f" periodos:  {feq['period_frames']:.2f} " )
 
 analise1 = AnalisarCiclosDataset(golpe_csv=df2)
-feq2 =  analise1.verificar_periodo2(idx_ponto=9) # obtem valores dos ciclos
+feq2 =  analise1.verificar_periodo(idx_ponto=9) # obtem valores dos ciclos
 print(f" frequencia dom:  {feq2['dominant_frequency']} " ) # pico de maior amplitude / componente de frequência com maior intensidade (amplitude) no espectro do movimento analisado.
 print(f" periodos:  {feq2['period_frames']:.2f} " )
 # print(feq)
@@ -122,53 +123,123 @@ print(f" periodos:  {feq2['period_frames']:.2f} " )
     
 # print(interpretar_erro_m(erro_m))
 
-########################
-def media_geral():
+
+# MAIS COMPLETO
+def analisar_todas_articulacoes_df(df1: pd.DataFrame, df2: pd.DataFrame, colunas_articulacoes: list):
     resultados = []
-    for articulacao in Globais.nome_articulacoes():
-        analisador = AnalisarSequenciasDTW(df, df2, articulacao=articulacao)
-        resultado_dtw = analisador.calcular_distancia_dtw_lib("euclidean_distance")
-        erro_medio = analisador.calcular_erro_medio_p2p(path_alinhamento=resultado_dtw['path'])
+
+    for art in colunas_articulacoes:
+        print(f"\n🔍 Analisando: {art}")
+        analisador = AnalisarSequenciasDTW(df1, df2, art)
+        res_dtw = analisador.calcular_distancia_dtw_lib("squared_euclidean_distance")
+
+        distancias_info = analisador.calcular_distancias_p2p(res_dtw['path'])
+
+        analisador.plotar_dtw_lib(res_dtw['alinhamento'])
+        analisador.plotar_distancias_ponto_a_ponto(distancias_info["distancias"], res_dtw['path'])
 
         resultados.append({
-            'articulacao': articulacao,
-            'dtw_distancia': resultado_dtw['distance'],
-            'dtw_normalizada': resultado_dtw['normalized_distance'],
-            'erro_medio': erro_medio
+            "articulacao": art,
+            "dtw_distance": res_dtw["distance"],
+            "normalized": res_dtw["normalized_distance"],
+            "erro_medio": distancias_info["media"],
+            "desvio": distancias_info["desvio"]
         })
 
     df_resultados = pd.DataFrame(resultados)
+    
+    print("\n📊 Tabela de Resultados:")
+    print(df_resultados.sort_values("erro_medio", ascending=False).round(4))
 
     media_geral = {
-        'dtw_media': df_resultados['dtw_distancia'].mean(),
-        'dtw_normalizada_media': df_resultados['dtw_normalizada'].mean(),
-        'erro_medio_global': df_resultados['erro_medio'].mean()
+        "dtw_media": df_resultados["dtw_distance"].mean(),
+        "dtw_normalizada_media": df_resultados["normalized"].mean(),
+        "erro_medio_global": df_resultados["erro_medio"].mean(),
+        "desvio_global": df_resultados["desvio"].mean()
     }
-            
-    print(df_resultados)
-    print("Média Geral:", media_geral)
 
-# media_geral()
+    print("\n📈 Média Geral:")
+    for k, v in media_geral.items():
+        print(f"{k}: {v:.4f}")
 
-
-# Supondo que você já tenha uma instância do analisador e o resultado do DTW:
+    return df_resultados
 analisador = AnalisarSequenciasDTW(df, df2, articulacao="l_w")
 resultado_dtw = analisador.calcular_distancia_dtw_lib("squared_euclidean_distance")
 
-# 1. Calcule as distâncias ponto a ponto
 distancias_info = analisador.calcular_distancias_p2p(resultado_dtw['path'])
 
-# 2. Print dos valores obtidos
 print("Média:", distancias_info["media"])
 print("Desvio padrão:", distancias_info["desvio"])
 print("Máximo:", distancias_info["max"])
 print("Mínimo:", distancias_info["min"])
 print("Distâncias:", distancias_info["distancias"])
 
-# 3. Envie as distâncias para o plot
 analisador.plotar_distancias_ponto_a_ponto(distancias_info["distancias"], resultado_dtw['path'])
 
+def carregar_dataset_loop(caminho):
+    estrutura = {}
+    for caminho_csv in glob(f"{caminho}/*/*.csv"):
+        nome_classe = os.path.basename(os.path.dirname(caminho_csv))
+        if '-' not in nome_classe:
+            continue
+        tipo, lado = nome_classe.rsplit('-', 1)
+        estrutura.setdefault(tipo, {}).setdefault(lado, []).append(caminho_csv)
+    return estrutura
 
+def carregar_dataset_teste(caminho):
+    estrutura = {}
+    for caminho_csv in glob(f"{caminho}/*/*.csv"):
+        tipo = os.path.basename(os.path.dirname(caminho_csv))
+        estrutura.setdefault(tipo, []).append(caminho_csv)
+    return estrutura
+
+def comparar_loops_testes(dataset_loop, dataset_teste, articulacoes):
+    resultados_detalhados = []
+    resumo = []
+
+    for tipo_golpe, testes in dataset_teste.items():
+        if tipo_golpe not in dataset_loop:
+            print(f"Tipo {tipo_golpe} não está no dataset loop, pulando.")
+            continue
+
+        for lado in dataset_loop[tipo_golpe].keys():
+            modelos = dataset_loop[tipo_golpe][lado]
+
+            for csv_teste in testes:
+                df_teste = pd.read_csv(csv_teste)
+
+                for csv_modelo in modelos:
+                    df_modelo = pd.read_csv(csv_modelo)
+
+                    df_resultados = analisar_todas_articulacoes_df(df_modelo, df_teste, articulacoes)
+
+                    for idx, row in df_resultados.iterrows():
+                        resultados_detalhados.append({
+                            "golpe": tipo_golpe,
+                            "lado_modelo": lado,
+                            "modelo": os.path.basename(csv_modelo),
+                            "teste": os.path.basename(csv_teste),
+                            "articulacao": row["articulacao"],
+                            "dtw_distance": row["dtw_distance"],
+                            "normalized": row["normalized"],
+                            "erro_medio": row["erro_medio"],
+                            "desvio": row["desvio"]
+                    })
+                    media_global = {
+                        "golpe": tipo_golpe,
+                        "lado_modelo": lado,
+                        "modelo": os.path.basename(csv_modelo),
+                        "teste": os.path.basename(csv_teste),
+                        "dtw_media": df_resultados["dtw_distance"].mean(),
+                        "dtw_normalizada_media": df_resultados["normalized"].mean(),
+                        "erro_medio_global": df_resultados["erro_medio"].mean(),
+                        "desvio_global": df_resultados["desvio"].mean()
+                    }
+                    resumo.append(media_global)
+    df_resultados_detalhados = pd.DataFrame(resultados_detalhados)
+    df_resumo = pd.DataFrame(resumo)
+
+    return df_resultados_detalhados, df_resumo
 
 ## CALCULAR ERRO MEDIO PONTO A PONTO
 ## CALCULAR DISTANCIAS PONTO A PONTO
@@ -179,10 +250,24 @@ analisador.plotar_distancias_ponto_a_ponto(distancias_info["distancias"], result
 ## 
 
 
+"""
+💡 1. dtw_distance:
+
+Distância absoluta (quanto maior, mais diferente as curvas são). Pode ser afetado por escala ou amplitude dos movimentos.
+💡 2. normalized:
+
+Versão normalizada da DTW (divide pelo comprimento total do caminho de alinhamento). Bom para comparar vídeos de durações diferentes.
+💡 3. erro_medio:
+
+Erro médio ponto a ponto entre as séries alinhadas. Isso quantifica a diferença média entre os keypoints após alinhamento DTW.
+💡 4. desvio:
+
+Mostra a variação dos erros ponto a ponto. Um desvio alto indica movimentos inconsistentes.
+"""
 
 """  
-✅ Como detectar outliers?
-📈 Regra prática mais usada:
+Como detectar outliers?
+Regra prática mais usada:
 
 Se o valor estiver acima da média + 2 desvios padrão, é um outlier.
 
@@ -192,7 +277,7 @@ desvio = df['erro_medio'].std()
 limite_superior = media + 2 * desvio
 outliers = df[df['erro_medio'] > limite_superior]
 
-✅ Como remover e recalcular a média?
+Como remover e recalcular a média?
 
 # Remove outliers antes de calcular a média
 sem_outliers = df[df['erro_medio'] <= limite_superior]
